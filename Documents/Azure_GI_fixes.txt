@@ -1,0 +1,201 @@
+
+
+Fixes on the OS level for the Azure marketplace image:
+======================================================
+
+
+File: /etc/sshd_config ==
+
+Protocol 2
+
+LogLevel VERBOSE
+
+X11Forwarding yes # comment out 
+X11Forwarding no
+
+MaxAuthTries 3
+
+IgnoreRhosts yes
+
+HostbasedAuthentication no
+
+PermitRootLogin no
+
+PermitEmptyPasswords no
+
+PermitUserEnvironment no
+
+# Ciphers and keying
+
+
+ClientAliveInterval 180  --> 300
+
+Banner /etc/issue
+
+File: /etc/security/pwquality.conf
+
+minlen = 6  --> 8
+
+dcredit = 0 --> -1
+
+ucredit = 0 --> -1
+
+ocredit = 0 --> -1
+
+lcredit = 0 --> -1
+
+
+File: /etc/pam.d/system-auth
+
+#password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok
+
+password    sufficient    pam_unix.so remember=15 sha512 shadow nullok try_first_pass use_authtok
+
+File: /etc/pam.d/su
+auth            required        pam_wheel.so use_uid group=wheel,hclunix
+
+File: /etc/login.defs
+
+#PASS_MAX_DAYS  99999 Actual
+PASS_MAX_DAYS   90    Expected
+
+#PASS_MIN_DAYS  0   Actual
+PASS_MIN_DAYS   7   Expected
+
+[root@qa01-dpt-1079-vm01 home]# cd omi/
+[root@qa01-dpt-1079-vm01 omi]# ls
+[root@qa01-dpt-1079-vm01 omi]# passwd -l nxautomation 
+Locking password for user nxautomation.
+passwd: Success
+[root@qa01-dpt-1079-vm01 omi]# passwd -l om
+omi       omsagent  
+[root@qa01-dpt-1079-vm01 omi]# passwd -l omsagent 
+Locking password for user omsagent.
+passwd: Success
+[root@qa01-dpt-1079-vm01 omi]# passwd -l omi
+Locking password for user omi.
+passwd: Success
+[root@qa01-dpt-1079-vm01 omi]# 
+
+File: /etc/bashrc
+
+    if [ $UID -gt 199 ] && [ "`id -gn`" = "`id -un`" ]; then
+       #umask 002 Actual
+       umask 027  Expected
+    else
+       #umask 022 Actual
+       umask 027  Expected
+	   
+File: /etc/profile
+ 
+    if [ $UID -gt 199 ] && [ "`id -gn`" = "`id -un`" ]; then
+#    umask 002 Actual
+    umask 027  Expected
+else
+#    umask 022 Actual
+    umask 027  Expected
+fi
+
+
+cd /home/omi 
+chown omi:omi .bash_logout .bash_profile .bashrc
+
+[root@qa01-dpt-1079-vm01 omi]# chmod 750 /home/devops
+[root@qa01-dpt-1079-vm01 omi]# chmod 750 /home/dptadmin
+[root@qa01-dpt-1079-vm01 omi]# chmod 750 /home/omi
+[root@qa01-dpt-1079-vm01 omi]# chmod 750 /home/cronsec
+
+
+kill the OMI process, 
+
+chown omi /var/spool/mail/omi
+
+set UID 2468 
+
+usermod -u 2468 omi
+
+
+#### Insert the follwing in the /etc/security/limits.conf
+
+
+
+*               hard    core            0
+*               soft    core            0
+
+
+### /etc/sysconfig/init
+
+umask 027
+
+sudo subscription-manager register --auto-attach --username=XXX --password=XXX
+
+### yum install ntp
+
+### /etc/ntp.conf 
+
+#restrict default nomodify notrap nopeer noquery --> This needs to be comment out
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+
+server timemdc01.network.rogers.com
+server timemdc02.network.rogers.com
+server timetdc01.network.rogers.com
+
+### /etc/sysconfig/ntpd
+
+#OPTIONS="-g"   --> This needs to be comment out
+OPTIONS="-u ntp:ntp"
+
+
+#### run time execution
+
+[root@qa01-dpt-1079-vm01 run]# sysctl -w net.ipv4.conf.all.send_redirects=0
+net.ipv4.conf.all.send_redirects = 0
+[root@qa01-dpt-1079-vm01 run]# sysctl -w net.ipv4.conf.all.send_redirects=0
+net.ipv4.conf.all.send_redirects = 0
+[root@qa01-dpt-1079-vm01 run]# sysctl -w net.ipv4.conf.all.accept_redirects=0
+net.ipv4.conf.all.accept_redirects = 0
+[root@qa01-dpt-1079-vm01 run]# sysctl -w net.ipv4.conf.default.accept_redirects=0
+net.ipv4.conf.default.accept_redirects = 0
+[root@qa01-dpt-1079-vm01 run]# sysctl -w net.ipv4.conf.all.log_martians=1
+net.ipv4.conf.all.log_martians = 1
+[root@qa01-dpt-1079-vm01 run]# sysctl -w net.ipv4.conf.default.log_martians=1
+net.ipv4.conf.default.log_martians = 1
+[root@qa01-dpt-1079-vm01 run]# 
+
+#### /etc/sysctl.conf 
+
+fs.suid_dumpable = 0
+kernel.randomize_va_space = 2
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.default.log_martians = 1
+
+
+### Remove the file /etc/at.deny
+
+
+rm /etc/at.deny
+
+sudo subscription-manager register --auto-attach --username=dilip.hl.patel --password=Loveyou786
+
+sudo subscription-manager unregister
+
+sudo waagent -force -deprovision
+
+******* LVM partitioning
+
+sda                 8:0    0  128G  0 disk 
+├─sda1              8:1    0  500M  0 part /boot
+├─sda2              8:2    0 29.5G  0 part 
+│ └─rhel-root     253:0    0 27.5G  0 lvm  /
+└─sda3              8:3    0   96G  0 part 
+  ├─rhel-tmp      253:1    0    8G  0 lvm  /tmp                       
+  ├─rhel-home     253:2    0    12G  0 lvm  /home
+  ├─rhel-var      253:3    0    22G  0 lvm  /var
+  ├─rhel-var--log 253:4    0    32G  0 lvm  /var/log
+  └─rhel-opt      253:5    0    16G  0 lvm  /opt
+
