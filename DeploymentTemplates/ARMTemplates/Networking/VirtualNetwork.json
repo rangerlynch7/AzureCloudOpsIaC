@@ -34,15 +34,14 @@
         }
     }
 ],
-
-    "outputs": {
-        "returnedVnetName": {
-            "type": "string",
-            "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-        },
-        "returnedVnetAddressPrefix": {
-            "type": "string",
-            "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetAddressPrefix'))]"
-        }
+"outputs": {
+    "returnedVnetName": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+    },
+    "returnedVnetAddressPrefix": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetAddressPrefix'))]"
     }
+}
 }
