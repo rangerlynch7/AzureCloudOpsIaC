@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "publicIPAddressName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Public IP Address"
+            }
+        },
+        "publicIPAllocationMethod": {
+                "type": "string",
+                "allowedValues":[
+                    "Static",
+                    "Dynamic"
+                ],
+                "metadata": {
+                    "description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
+                }
+            },
+        "dnsLabelPrefix": {
+                "type": "string",
+                "metadata": {
+                  "description": "DNS Label for the Public IP. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
+                }
+              }
+},
+"resources":[               
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Network/publicIPAddresses",
+          "name": "[parameters('publicIPAddressName')]",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
+            "dnsSettings": {
+              "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+            }
+          }
+        }
+],
+
+    "outputs": {
+        "returnedPublicIp": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+        }
+    }
+}

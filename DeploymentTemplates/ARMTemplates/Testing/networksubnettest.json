@@ -1,0 +1,83 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Virtual Network"
+            }
+        },
+        "vnetAddressPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP Address pool for the virtual network in CIDR format."
+                }
+        },
+        "subnetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP Address pool for the Subnet in CIDR format."
+            }
+        },
+          "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Subnet"
+            }
+        }
+},
+"variables": {
+    "templateBaseUrl": "https://github.com/rangerlynch7/AzDevopsTest/",
+    "virtualNetworkTemplateUrl": "[concat(variables('templateBaseUrl'), 'VirtualNetwork.json')]",
+    "subnetTemplateUrl": "[concat(variables('templateBaseUrl'), 'Subnet.json')]",
+    "parametersUrl": "[concat(variables('templateBaseUrl'), 'networksubnetnsgtest.parameters.json')]"
+},
+"resources": [
+    {
+       "apiVersion": "2017-05-10",
+       "name": "LinkedTemplate",
+       "type": "Microsoft.Resources/deployments",
+       "properties": {
+         "mode": "Incremental",
+         "templateLink": {
+            "uri":"[parameters('virtualNetworkTemplateUrl')]"
+         },
+         "parameters": {
+          "uri":"[parameters('parametersUrl')]"
+          }
+       }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "LinkedTemplate",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+           "uri":"[parameters('subnetTemplateUrl')]"
+        },
+        "parameters": {
+          "uri":"[parameters('parametersUrl')]"
+         },
+         "dependsOn": [
+          "LinkedTemplate",
+          "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+         ]
+        }
+   },
+
+
+  ],
+
+    "outputs": {
+        "returnedVnetName": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+        },
+        "returnedVnetAddressPrefix": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetAddressPrefix'))]"
+        }
+    }
+}
