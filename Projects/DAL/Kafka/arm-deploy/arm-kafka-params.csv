@@ -1,0 +1,26 @@
+Parameter,arm-kafka-params-os.json,arm-kafka-params-rg.json
+ClusterKind,kafka,kafka
+ClusterName,cclkt5,cclkg3dal
+ClusterVersion,4,3.6
+ClusterWorkerNodeCount,3,3
+Location,canadacentral,canadacentral
+LoginPassword,VDG9#4pjCb$3tuR_dAi,VDG9#4pjCb$3tuR_dAi
+LoginUserName,admin,admin
+resourceGroupNameKafka,cc.l.k,npe-dal-app-rg2
+resourceGroupNameVnet,cc.l.net,npe-network-rg2
+ScriptNodeHead,test-hdinsight-kafka-head.sh,test-hdinsight-kafka-head.sh
+ScriptNodeWorker,test-hdinsight-kafka-worker.sh,test-hdinsight-kafka-worker.sh
+ScriptNodeZookeeper,test-hdinsight-kafka-zookeeper.sh,test-hdinsight-kafka-zookeeper.sh
+ScriptStorageAccountName,ccltygoelelats,ccltygoelelats
+SrvPass,serversecret,serversecret
+SshPassword,VDG9#4pjCb$3tuR_dAi,VDG9#4pjCb$3tuR_dAi
+SshUserName,sshuser,sshuser
+StorageAccountName,ccltygoelelatk,azcestgkafkastrage02
+Tier,Standard,Premium
+VmSizeHeadNode,Standard_D3_V2,Standard_D3_V2
+VmSizeWorkerNode,Standard_D3_V2,Standard_D3_V2
+VmSizeZookeeperNode,Standard_A4_V2,Standard_A4_V2
+VNetName,cc.l.k,cc.l.k
+VNetSubnetName,kafka,paas-tier-prd 
+SubscriptionName,rgobjectsharp,INF NPE
+KeyVaultKafka,xxx,dalinf-stg-kv 
