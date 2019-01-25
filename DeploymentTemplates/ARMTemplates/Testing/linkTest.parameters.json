@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "value": "testvnet"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.200.0.0/16"
+    },
+    "subnetName": {
+      "value":"subnet1"
+  },
+    "subnetPrefix": {
+      "value": "10.200.1.0/24"
+    },
+    "storageAccountName": {
+      "value": "nischitharchtest7736"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "storageAccountKind": {
+      "value": "StorageV2"
+    }
+  }
+}
