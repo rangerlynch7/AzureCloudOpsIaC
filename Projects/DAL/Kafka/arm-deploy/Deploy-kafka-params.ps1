@@ -4,8 +4,10 @@ $TemplateFile = "arm-$DeployType.json"
 
 . ./Import-Csv2Vars.ps1
 $resourceGroupName = $resourceGroupNameKafka
-$vnet = Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | ? Name -eq $vnetName
-$VNetId = $vnet.Id
+$vnetName
+Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | % Name
+$VNetId = Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | ? Name -eq $vnetName | % Id
+if ($null -eq $VNetId) {throw "VNetId null"}
 
 $TemplateParameterObject = @{
 	ClusterName              = $ClusterName
@@ -28,6 +30,7 @@ $TemplateParameterObject = @{
 	VmSizeWorkerNode         = $VmSizeWorkerNode
 	VmSizeZookeeperNode      = $VmSizeZookeeperNode
 }
+$TemplateParameterObject | ConvertTo-Json 
 
 Try {
 	Get-AzureRmResourceGroup -Name $resourceGroupName -Location $location -ErrorAction Stop

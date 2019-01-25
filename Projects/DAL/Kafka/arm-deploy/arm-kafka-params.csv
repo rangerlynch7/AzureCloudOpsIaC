@@ -4,8 +4,8 @@ ClusterName,cclkt5,cclkg3dal
 ClusterVersion,4,3.6
 ClusterWorkerNodeCount,3,3
 Location,canadacentral,canadacentral
-LoginPassword,VDG9#4pjCb$3tuR_dAi,VDG9#4pjCb$3tuR_dAi
-LoginUserName,admin,admin
+ClusterLoginPassword,VDG9#4pjCb$3tuR_dAi,VDG9#4pjCb$3tuR_dAi
+ClusterLoginUserName,admin,admin
 resourceGroupNameKafka,cc.l.k,npe-dal-app-rg2
 resourceGroupNameVnet,cc.l.net,npe-network-rg2
 ScriptNodeHead,test-hdinsight-kafka-head.sh,test-hdinsight-kafka-head.sh
@@ -20,7 +20,7 @@ Tier,Standard,Premium
 VmSizeHeadNode,Standard_D3_V2,Standard_D3_V2
 VmSizeWorkerNode,Standard_D3_V2,Standard_D3_V2
 VmSizeZookeeperNode,Standard_A4_V2,Standard_A4_V2
-VNetName,cc.l.k,cc.l.k
-VNetSubnetName,kafka,paas-tier-prd 
+VNetName,cc.l.k,npe-inf-caest-vnet02
+VNetSubnetName,kafka,paas-tier-prd2
 SubscriptionName,rgobjectsharp,INF NPE
-KeyVaultKafka,xxx,dalinf-stg-kv 
+KeyVaultKafka,xxx,dalinf-stg-kv2
