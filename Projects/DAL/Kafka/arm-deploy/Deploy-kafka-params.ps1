@@ -2,12 +2,17 @@ $DeployType = "kafka"
 $deploymentName = "$DeployType-$(get-date -f yyyymmdd_HHmm)"
 $TemplateFile = "arm-$DeployType.json"
 
+$psise
 . ./Import-Csv2Vars.ps1
 $resourceGroupName = $resourceGroupNameKafka
-$vnetName
-Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | % Name
-$VNetId = Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | ? Name -eq $vnetName | % Id
-if ($null -eq $VNetId) {throw "VNetId null"}
+Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Stop | % ResourceId
+$VNet = Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | ? Name -eq $vnetName
+if ($null -eq $VNet.Id) {throw "VNetId null"}
+$VNet.Id
+if ($vnet.Subnets.Name -notcontains $VNetSubnetName) {"possible subnets:{0}" -f ($vnet.Subnets.Name -join ","); throw "$VNetSubnetName is incorrect" }
+
+$VNetSubnetName
+
 
 $TemplateParameterObject = @{
 	ClusterName              = $ClusterName
@@ -30,7 +35,7 @@ $TemplateParameterObject = @{
 	VmSizeWorkerNode         = $VmSizeWorkerNode
 	VmSizeZookeeperNode      = $VmSizeZookeeperNode
 }
-$TemplateParameterObject | ConvertTo-Json 
+$TemplateParameterObject | ConvertTo-Json > ParamsNotWorking.json
 
 Try {
 	Get-AzureRmResourceGroup -Name $resourceGroupName -Location $location -ErrorAction Stop

@@ -29,15 +29,15 @@
             }
         },
         "ClusterWorkerNodeCount": {
-            "defaultValue": "3",
-            "type": "Int",
+            "defaultValue": 3,
+            "type": "int",
             "metadata": {
                 "description": "number of Cluster Worker Nodes"
             }
         },
         "DataDisksGroupsDisksPerNode": {
             "defaultValue": 2,
-            "type": "Int",
+            "type": "int",
             "metadata": {
                 "description": "Disks per node"
             }
