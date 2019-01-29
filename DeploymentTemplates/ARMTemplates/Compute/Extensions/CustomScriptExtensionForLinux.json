@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "commandToExecute": {
+            "type": "string",
+            "metadata": {
+                "description": "Define the command to execute in the extension."
+            }
+        },
+        "script": {
+                "type": "string",
+                "metadata": {
+                    "description": "Name of the script file to execute."
+                }
+            },
+        "fileLocation":{
+            "type": "string",
+                "metadata": {
+                    "description": "Location of the script file. This value can be defines to be a parameter or a variable, since it might be hosted in the same tree or in storage account"
+                }
+        }
+},
+"resources":[
+{
+    "name": "[concat(parameters('vmssName'),'/','customScriptForLinux')]",
+    "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+    "location": "[resourceGroup().location]",
+    "apiVersion": "2015-06-15",
+    "metadata":{
+        "description":"Dependency can be specified on the master template"
+    },
+    "dependsOn": [
+      "vmssDeploymentTemplate"
+    ],
+    "tags": {
+    },
+    "properties": {
+      "publisher": "Microsoft.Azure.Extensions",
+      "type": "CustomScript",
+      "typeHandlerVersion": "2.0",
+      "autoUpgradeMinorVersion": true,
+      "settings": {
+        "skipDos2Unix":false,
+        "timestamp":123456789          
+      },
+      "protectedSettings": {
+         "commandToExecute": "[parameters('commandToExecute')]",
+         "script": "[parameters('script')]",
+         "fileUris":"[parameters('fileLocation')]" 
+      }
+    }
+}
+]
+}

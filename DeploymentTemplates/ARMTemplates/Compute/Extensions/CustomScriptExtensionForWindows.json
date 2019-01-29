@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "commandToExecute": {
+            "type": "string",
+            "metadata": {
+                "description": "Define the command to execute in the extension."
+            }
+        },
+        "fileLocation":{
+            "type": "string",
+                "metadata": {
+                    "description": "Location of the script file. This value can be defines to be a parameter or a variable, since it might be hosted in the same tree or in storage account"
+                }
+        }
+},
+"resources":[
+{
+        "name": "customScriptForWindows",
+        "apiVersion": "2018-06-01",
+        "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+        "location": "[resourceGroup().location]",
+        "metadata":{
+            "description":"Dependency can be specified on the master template"
+        },
+        "dependsOn": [
+            "vmssDeploymentTemplate"
+        ],
+        "tags": {
+        },
+        "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+                "timestamp":123456789
+            },
+            "protectedSettings": {
+                "commandToExecute": "[parameters('commandToExecute')]",
+                "fileUris":"[parameters('fileLocation')]" 
+            }
+        }
+    }
+]
+}
