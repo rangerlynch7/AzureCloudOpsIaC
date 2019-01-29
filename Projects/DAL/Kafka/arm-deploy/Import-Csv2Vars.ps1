@@ -1,5 +1,5 @@
 $CsvFile="arm-kafka-params.csv"
-$Column="arm-kafka-params-rg.json" 
+$Column="arm-kafka-params-os.json" 
 $Delimiter=","
 
 $HtParams=[ordered]@{}
@@ -13,4 +13,4 @@ foreach ($Object in $Objects) {
 	$HtParams[$Key]=$Value
 }
 # $HtParams | ConvertTo-Json
-$HtParams["Location"]
+# $HtParams["Location"]

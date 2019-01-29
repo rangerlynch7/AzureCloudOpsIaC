@@ -2,17 +2,12 @@ $DeployType = "kafka"
 $deploymentName = "$DeployType-$(get-date -f yyyymmdd_HHmm)"
 $TemplateFile = "arm-$DeployType.json"
 
-$psise
 . ./Import-Csv2Vars.ps1
 $resourceGroupName = $resourceGroupNameKafka
 Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Stop | % ResourceId
 $VNet = Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | ? Name -eq $vnetName
 if ($null -eq $VNet.Id) {throw "VNetId null"}
-$VNet.Id
-if ($vnet.Subnets.Name -notcontains $VNetSubnetName) {"possible subnets:{0}" -f ($vnet.Subnets.Name -join ","); throw "$VNetSubnetName is incorrect" }
-
-$VNetSubnetName
-
+if ($vnet.Subnets.Name -notcontains $VNetSubnetName) { throw "[$VNetSubnetName] subnet is not one of the available [$($vnet.Subnets.Name -join ",")]" }
 
 $TemplateParameterObject = @{
 	ClusterName              = $ClusterName
@@ -29,13 +24,13 @@ $TemplateParameterObject = @{
 	SshPassword              = $SshPassword
 	SshUserName              = $SshUserName
 	StorageAccountName       = $StorageAccountName
-	VNetId                   = $VNetId
+	VNetId                   = $VNet.Id
 	VNetSubnetName           = $VNetSubnetName
 	VmSizeHeadNode           = $VmSizeHeadNode
 	VmSizeWorkerNode         = $VmSizeWorkerNode
 	VmSizeZookeeperNode      = $VmSizeZookeeperNode
 }
-$TemplateParameterObject | ConvertTo-Json > ParamsNotWorking.json
+$TemplateParameterObject | ConvertTo-Json > TemplateParameterObject.json; code TemplateParameterObject.json
 
 Try {
 	Get-AzureRmResourceGroup -Name $resourceGroupName -Location $location -ErrorAction Stop

@@ -35,6 +35,13 @@
                 "description": "number of Cluster Worker Nodes"
             }
         },
+        "ClusterZookeeperNodeCount": {
+            "defaultValue": 3,
+            "type": "int",
+            "metadata": {
+                "description": "number of Cluster Worker Nodes"
+            }
+        },
         "DataDisksGroupsDisksPerNode": {
             "defaultValue": 2,
             "type": "int",
@@ -242,7 +249,7 @@
                                     "uri": "[variables('ScriptUriZookeeper')]"
                                 }
                             ],
-                            "targetInstanceCount": 3,
+                            "targetInstanceCount": "[parameters('ClusterZookeeperNodeCount')]",
                             "virtualNetworkProfile": {
                                 "id": "[parameters('VNetId')]",
                                 "subnet": "[variables('VNetSubnetRef')]"

@@ -5,7 +5,7 @@
   "ClusterLoginPassword": "VDG9#4pjCb$3tuR_dAi",
   "SshPassword": "VDG9#4pjCb$3tuR_dAi",
   "VmSizeHeadNode": "Standard_D3_V2",
-  "VNetId": null,
+  "VNetId": "/subscriptions/c4f2a033-f2ec-458c-b061-ba835af94f0e/resourceGroups/cc.l.network/providers/Microsoft.Network/virtualNetworks/cc.l.k",
   "VmSizeWorkerNode": "Standard_D3_V2",
   "ScriptNodeHead": "test-hdinsight-kafka-head.sh",
   "VNetSubnetName": "kafka",

@@ -1,0 +1,1 @@
+Remove-AzureRmDnsZone -Name $DnsZoneName -ResourceGroupName $ResourceGroupName
