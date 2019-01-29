@@ -2,6 +2,8 @@ $DeployType = "kafka"
 $deploymentName = "$DeployType-$(get-date -f yyyymmdd_HHmm)"
 $TemplateFile = "arm-$DeployType.json"
 
+Split-Path $MyInvocation.MyCommand.Path | set-location
+
 . ./Import-Csv2Vars.ps1
 $resourceGroupName = $resourceGroupNameKafka
 Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Stop | % ResourceId
@@ -38,6 +40,6 @@ Try {
 Catch {
 	New-AzureRmResourceGroup -Name $resourceGroupName -Location $location -ErrorAction SilentlyContinue -Confirm:$false -Force
 }
-
+# exit
 Test-AzureRmResourceGroupDeployment -Verbose -ResourceGroupName $ResourceGroupName -TemplateFile $TemplateFile -TemplateParameterObject $TemplateParameterObject
 New-AzureRmResourceGroupDeployment -Name $DeploymentName -Verbose -ResourceGroupName $ResourceGroupName -TemplateFile $TemplateFile -TemplateParameterObject $TemplateParameterObject
