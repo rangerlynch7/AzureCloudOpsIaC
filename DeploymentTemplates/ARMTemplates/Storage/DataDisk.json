@@ -8,6 +8,13 @@
             "metadata": {
                 "description": "The sku Name of the Data Disk"
             }
+        },
+        "diskSizeGB": {
+            "type": "int",
+            "deafultValue":1023,
+            "metadata": {
+                "description": "The sku Name of the Data Disk"
+            }
         }
 },
 "resources":[
@@ -23,7 +30,7 @@
         "creationData": {
             "createOption": "Empty"
         },
-        "diskSizeGB": 1023
+        "diskSizeGB": "[parameters('diskSizeGB')]"
     }
 }
 ]
