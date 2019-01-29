@@ -17,7 +17,7 @@
 },
 "resources":[
 {
-        "name": "customScriptForWindows",
+        "name": "[concat(parameters('vmssName'),'/','customScriptForWindows')]",
         "apiVersion": "2018-06-01",
         "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
         "location": "[resourceGroup().location]",
