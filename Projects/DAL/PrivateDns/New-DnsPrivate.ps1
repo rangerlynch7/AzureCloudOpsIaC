@@ -32,5 +32,3 @@ New-AzureRmDnsZone -Name $DnsZoneName -ResourceGroupName $ResourceGroupName `
    -RegistrationVirtualNetworkId @($vnet.Id)
 
 # Get-AzureRmDnsZone -ResourceGroupName $ResourceGroupName
-
-
