@@ -1,0 +1,157 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmSku": {
+        "type": "string",
+        "allowedValues": [
+            "Standard_A1",
+            "Standard_A2",
+            "Standard_A3",
+            "Standard_A4",
+            "Standard_A5",
+            "Standard_A6",
+            "Standard_A7",
+            "Standard_A8",
+            "Standard_A1_v2",
+            "Standard_A2_v2",
+            "Standard_A4_v2",
+            "Standard_A8_v2",
+            "Standard_D1",
+            "Standard_D2",
+            "Standard_D3",
+            "Standard_D4",
+            "Standard_D11",
+            "Standard_D12",
+            "Standard_D13",
+            "Standard_D14",
+            "Standard_D1_v2",
+            "Standard_D2_v2",
+            "Standard_D3_v2",
+            "Standard_D4_v2",
+            "Standard_D5_v2",
+            "Standard_D11_v2",
+            "Standard_D12_v2",
+            "Standard_D13_v2",
+            "Standard_D14_v2"
+        ],
+        "defaultValue": "Standard_A1",
+        "metadata": {
+            "description": "App VM size to provision. See https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs"
+        }
+    },
+      "vmssName": {
+        "type": "string",
+        "metadata": {
+          "description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
+        },
+        "maxLength": 61
+      },
+      "instanceCount": {
+        "type": "int",
+        "metadata": {
+          "description": "Number of VM instances (100 or less)."
+        },
+        "defaultValue": 2,
+        "maxValue": 100
+      },
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "Admin username on all VMs."
+        }
+      },
+      "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Admin password on all VMs."
+        }
+      },
+      "vnetName": {
+        "type": "string",
+        "metadata": {
+          "description": "vName of the existing virtual network to deploy the scale set into."
+        }
+      },
+      "subnetName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of the existing subnet to deploy the scale set into."
+        }
+      },
+      "imageReference.publisher": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of the image publisher"
+        }
+      },
+      "imageReference.offer": {
+        "type": "string",
+        "metadata": {
+          "description": "Version of the image"
+        }
+      },
+      "imageReference.sku": {
+        "type": "string",
+        "metadata": {
+          "description": "Sku of the image specified"
+        }
+      },
+      "imageReference.version": {
+        "type": "string",
+        "defaultValue":"latest",
+        "metadata": {
+          "description": "Version of the image"
+        }
+      }
+    },
+    "variables": {
+      "publicIPAddressName": "pip",
+      "loadBalancerName": "loadBalancer",
+      "loadBalancerFrontEndName": "loadBalancerFrontEnd",
+      "loadBalancerBackEndName": "loadBalancerBackEnd",
+      "loadBalancerProbeName": "loadBalancerHttpProbe",
+      "loadBalancerNatPoolName": "loadBalancerNatPool"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Compute/virtualMachineScaleSets",
+        "name": "[parameters('vmssName')]",
+        "location": "[resourceGroup().location]",
+        "apiVersion": "2017-03-30",
+        "dependsOn": [
+          "loadblancerDeployment"
+        ],
+        "sku": {
+          "name": "[parameters('vmSku')]",
+          "capacity": "[parameters('instanceCount')]"
+        },
+        "properties": {
+          "overprovision": true,
+          "upgradePolicy": {
+            "mode": "Manual"
+          },
+          "virtualMachineProfile": {
+            "storageProfile": {
+              "osDisk": {
+                "createOption": "FromImage",
+                "caching": "ReadWrite"
+              },
+              "imageReference": {
+                "publisher": "[parameters('imageReference.publisher')]",
+                "offer": "[parameters('imageReference.offer')]",
+                "sku": "[parameters('imageReference.sku')]",
+                "version": "[parameters('imageReference.version')]"
+              }
+            },
+            "osProfile": {
+              "computerNamePrefix": "[parameters('vmssName')]",
+              "adminUsername": "[parameters('adminUsername')]",
+              "adminPassword": "[parameters('adminPassword')]"
+            },
+          }
+        }
+      }
+    ]
+  }
+  

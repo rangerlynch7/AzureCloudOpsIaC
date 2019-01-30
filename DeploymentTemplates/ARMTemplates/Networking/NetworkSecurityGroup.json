@@ -104,5 +104,6 @@
             "returnedNSGRuleName": {
                 "type": "string",
                 "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vnetName'))]"
-            },
+            }
+}
 }

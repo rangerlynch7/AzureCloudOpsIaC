@@ -21,29 +21,42 @@
                     "description": "The IP Address pool for the virtual network in CIDR format."
                 }
         },
+        "subnetName": {
+          "type": "string",
+          "metadata": {
+              "description": "Name of the Subnet"
+          }
+      },
         "vmssName": {
                 "type": "string",
                 "metadata": {
                     "description": "Name of VM Scale Set"
                 }
-            }
+            },
+        "lbName": {
+              "type": "string",
+              "metadata": {
+                  "description": "Name of the Load Balancer"
+              }
+          },
 },
 "variables":{
     "nicNamePrefix": "[concat(parameters('vmssName'),'-nic')]",
-    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables ('subnetName'))]",
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters ('subnetName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]"
 },
 "resources":[
 {
     "apiVersion": "2015-05-01-preview",
     "type": "Microsoft.Network/networkInterfaces",
-    "name": "[concat(variables('nicNamePrefix'), copyindex(1))]",
+    "name": "[concat(parameters(vmssName),'/',variables('nicNamePrefix'), copyindex(1))]",
     "location": "[resourceGroup().location]",
     "dependsOn": [
       "vnetdeployment",
       "loadblancerDeployment"
     ],
     "properties": {
+      "primary": true,
       "ipConfigurations": [
         {
           "name": "ipconfig1",

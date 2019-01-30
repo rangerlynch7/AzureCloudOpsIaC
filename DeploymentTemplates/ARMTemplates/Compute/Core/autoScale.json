@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "capacity.minimum": {
+            "type": "int",
+            "metadata": {
+              "description": "Minimum number of VMs in the Scale Set"
+            }
+          },
+        "capacity.maximum": {
+            "type": "int",
+            "metadata": {
+                "description": "Maximum number of VMs in the Scale Set"
+            }
+        },
+        "capacity.default": {
+                "type": "int",
+                "metadata": {
+                    "description": "Default number of VMs in the Scale Set"
+                }
+        },
+        "metricTrigger.increaseThreshold": {
+                "type": "int",
+                "metadata": {
+                    "description": "Threshold value for metric before adding an instance"
+                }
+            },
+        "metricTrigger.decreaseThreshold": {
+                "type": "int",
+                "metadata": {
+                    "description": "Threshold value for metric"
+                }
+            }
+},
+"resources":[
+    {
+        "type": "Microsoft.Insights/autoscaleSettings",
+        "apiVersion": "2015-04-01",
+        "name": "cpuautoscale",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+          "vmssDeployment"
+        ],
+        "properties": {
+          "name": "cpuautoscale",
+          "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
+          "enabled": true,
+          "profiles": [
+            {
+              "name": "Profile1",
+              "capacity": {
+                "minimum": "[parameters('capacity.minimum')]",
+                "maximum": "[parameters('capacity.maximum')]",
+                "default": "[parameters('capacity.default')]"
+              },
+              "rules": [
+                {
+                  "metricTrigger": {
+                    "metricName": "Percentage CPU",
+                    "metricNamespace": "",
+                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
+                    "timeGrain": "PT1M",
+                    "statistic": "Average",
+                    "timeWindow": "PT5M",
+                    "timeAggregation": "Average",
+                    "operator": "GreaterThan",
+                    "threshold": "[parameters('metricTrigger.increaseThreshold')]"
+                  },
+                  "scaleAction": {
+                    "direction": "Increase",
+                    "type": "ChangeCount",
+                    "value": "1",
+                    "cooldown": "PT5M"
+                  }
+                },
+                {
+                  "metricTrigger": {
+                    "metricName": "Percentage CPU",
+                    "metricNamespace": "",
+                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
+                    "timeGrain": "PT1M",
+                    "statistic": "Average",
+                    "timeWindow": "PT5M",
+                    "timeAggregation": "Average",
+                    "operator": "LessThan",
+                    "threshold": "[parameters('metricTrigger.decreaseThreshold')]"
+                  },
+                  "scaleAction": {
+                    "direction": "Decrease",
+                    "type": "ChangeCount",
+                    "value": "1",
+                    "cooldown": "PT5M"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+    }
+]
+}
