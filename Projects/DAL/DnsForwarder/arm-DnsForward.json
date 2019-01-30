@@ -1,0 +1,222 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "DnsVmName": {
+      "type": "string",
+      "defaultValue": "Dnsproxy",
+      "metadata": {
+        "description": "Name of the Virtual Machine."
+      }
+    },
+    "VmAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "User name for the Virtual Machine."
+      }
+    },
+    "VmSshPublicKeyData": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Pub Key"
+      }
+    },
+    "VmDiagStorageAccName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the storage account for diagnostics.  Storage account names must be globally unique."
+      }
+    },
+    "DnsForwardAcl": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/8",
+      "metadata": {
+        "description": "This is the IP address to forward DNS queries to.  The default value represents Azure's internal DNS recursive resolvers."
+      }
+    },
+    "DnsForwardTarget": {
+      "type": "string",
+      "defaultValue": "168.63.129.16",
+      "metadata": {
+        "description": "This is the IP address to forward DNS queries to.  The default value represents Azure's internal DNS recursive resolvers."
+      }
+    },
+    "Location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().Location]",
+      "metadata": {
+        "description": "Location"
+      }
+    },
+    "VNetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNetName"
+      }
+    },
+    "VNetSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNetSubnetName"
+      }
+    },
+    "VNetResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNetResourceGroupName"
+      }
+    },
+    "vmRhelOSVersion": {
+      "type": "string",
+      "defaultValue": "7.4",
+      "metadata": {
+        "description": "vmRhelOSVersion"
+      }
+    },
+    "DnsZone": {
+      "type": "string",
+      "metadata": {
+        "description": "DnsZone"
+      }
+    },
+    "DnsForwardScriptUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "DnsForwardScriptUrl"
+      }
+    },
+    "DnsForwardScriptName": {
+      "type": "string",
+      "metadata": {
+        "description": "scriptName"
+      }
+    }
+  },
+  "variables": {
+    "VmSize": "Standard_A1",
+    "asetName": "[concat(parameters('DnsVmName'),'-avail')]",
+    "Location": "[parameters('Location')]",
+    "nicName": "[concat(parameters('DnsVmName'), '-', 'nic')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "comments": "availability set for creating a HA cluster, run the template multiple times to get multiple DNS servers",
+      "name": "[variables('asetName')]",
+      "apiVersion": "2017-12-01",
+      "Location": "[variables('Location')]",
+      "sku": {
+        "name": "Aligned"
+      },
+      "properties": {
+        "platformFaultDomainCount": 2,
+        "platformUpdateDomainCount": 2
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "comments": "A single network interface on each DNS server",
+      "name": "[variables('nicName')]",
+      "apiVersion": "2015-06-15",
+      "Location": "[variables('Location')]",
+      "dependsOn": [],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(resourceId(parameters('VnetResourceGroupName'),'Microsoft.Network/virtualNetworks', parameters('VNetName')), '/subnets/', parameters('VNetSubnetName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "comments": "A stock RHEL server, a VM extension will add the DNS server to it later",
+      "name": "[parameters('DnsVmName')]",
+      "apiVersion": "2018-06-01",
+      "Location": "[variables('Location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('asetName'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('asetName'))]"
+        },
+        "hardwareProfile": {
+          "VmSize": "[variables('VmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('DnsVmName')]",
+          "AdminUsername": "[parameters('VmAdminUsername')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/',parameters('VmAdminUsername'),'/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('VmSshPublicKeyData')]"
+                }
+              ]
+            },
+            "provisionVMAgent": true
+          },
+          "secrets": [],
+          "allowExtensionOperations": true
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "RedHat",
+            "offer": "RHEL",
+            "sku": "[parameters('vmRhelOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('http://',parameters('VmDiagStorageAccName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "comments": "The shell script to install Bind9 and setup the ACL and forwarders.  If this step fails, check the logs in /var/log/waagent.log and /var/log/azure/* for details",
+      "name": "[concat(parameters('DnsVmName'),'/SetupDnsForward')]",
+      "apiVersion": "2015-06-15",
+      "location": "[variables('Location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('DnsVmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[parameters('DnsForwardScriptUrl')]"
+          ],
+          "commandToExecute": "[concat('sh ',parameters('DnsForwardScriptName'),' ',parameters('DnsForwardTarget'),' ', parameters('DnsForwardAcl'),' ', parameters('DnsZone'))]"
+        }
+      }
+    }
+  ]
+}
