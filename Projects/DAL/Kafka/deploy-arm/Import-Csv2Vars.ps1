@@ -1,5 +1,5 @@
 $CsvFile="arm-kafka-params.csv"
-$Column="arm-kafka-params-os.json" 
+$Column="arm-kafka-params-rg.json" 
 $Delimiter=","
 
 $HtParams=[ordered]@{}

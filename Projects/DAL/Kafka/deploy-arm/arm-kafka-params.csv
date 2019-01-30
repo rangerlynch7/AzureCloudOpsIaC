@@ -1,6 +1,6 @@
 Parameter,arm-kafka-params-os.json,arm-kafka-params-rg.json
 ClusterKind,kafka,kafka
-ClusterName,cclkt5,cclkg4dal
+ClusterName,cclkt5,cclkg1dal
 ClusterVersion,4,3.6
 ClusterWorkerNodeCount,3,3
 Location,canadacentral,canadaeast
