@@ -9,34 +9,28 @@
             }
         },
         "publicIPAllocationMethod": {
-                "type": "string",
-                "allowedValues":[
-                    "Static",
-                    "Dynamic"
-                ],
-                "metadata": {
-                    "description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
+            "type": "string",
+            "allowedValues": [
+                "Static",
+                "Dynamic"
+            ],
+            "metadata": {
+                "description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(parameters('vmssName'))]"
                 }
             }
-},
-"resources":[               
-        {
-          "apiVersion": "2017-06-01",
-          "type": "Microsoft.Network/publicIPAddresses",
-          "name": "[parameters('publicIPAddressName')]",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
-            "dnsSettings": {
-              "domainNameLabel": "[toLower(parameters('vmssName'))]"
-            }
-          }
         }
-],
-    "outputs": {
-        "returnedPublicIp": {
-            "type": "string",
-            "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
-        }
-    }
+    ],
 }

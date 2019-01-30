@@ -1,0 +1,119 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "value": "testvnet"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.200.0.0/16"
+    },
+    "nsgName": {
+      "value": "subnet1-nsg"
+    },
+    "securityRules.Name": {
+      "value": "ssh-access"
+    },
+    "securityRules.properties.protocol": {
+      "value": "TCP"
+    },
+    "securityRules.properties.sourcePortRange": {
+      "value": "*"
+    },
+    "securityRules.properties.destinationPortRange": {
+      "value": "22"
+    },
+    "securityRules.properties.sourceAddressPrefix": {
+      "value": "*"
+    },
+    "securityRules.properties.destinationAddressPrefix": {
+      "value": "*"
+    },
+    "securityRules.properties.access": {
+      "value": "Allow"
+    },
+    "securityRules.properties.priority": {
+      "value": "100"
+    },
+    "securityRules.properties.direction": {
+      "value": "Inbound"
+    },
+    "azureFirewallSubnetPrefix": {
+      "value": "10.200.255.0/24"
+    },
+    "subnetName": {
+      "value": "subnet1"
+    },
+    "subnetPrefix": {
+      "value": "10.200.1.0/24"
+    },
+    "nextHopIP": {
+      "value": "10.200.255.4"
+    },
+    "storageAccountName": {
+      "value": "nischitharchtest7736"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "storageAccountKind": {
+      "value": "StorageV2"
+    },
+    "vmssName": {
+      "value": "demoTest"
+    },
+    "vmSku": {
+      "value": "Standard_M8-2ms"
+    },
+    "instanceCount": {
+      "value": 2
+    },
+    "adminUsername": {
+      "value": "serveradmin"
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/686aa72d-4cbd-4651-a3ef-c712895aa458/resourceGroups/Admin/providers/Microsoft.KeyVault/vaults/testarmkeyvaultarch"
+        },
+        "secretName": "adminPassword"
+      }
+    },
+    "imageReference.publisher": {
+      "value": "Canonical"
+    },
+    "imageReference.offer": {
+      "value": "UbuntuServer"
+    },
+    "imageReference.sku": {
+      "value": "16.04-LTS"
+    },
+    "imageReference.version": {
+      "value": "latest"
+    },
+    "lbName": {
+      "value": "[concat(parameters('vmssName'),'-lb')]"
+    },
+    "publicIPAddressName": {
+      "value": "[concat(parameters('vmssName'),'-pip')]"
+    },
+    "publicIPAllocationMethod": {
+      "value": "Dynamic"
+    },
+    "capacity.minimum": {
+      "value": 2
+    },
+    "capacity.maximum": {
+      "value": 6
+    },
+    "capacity.default": {
+      "value": 2
+    },
+    "metricTrigger.increaseThreshold": {
+      "value": 75
+    },
+    "metricTrigger.decreaseThreshold": {
+      "value": 20
+    }
+  }
+}

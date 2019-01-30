@@ -8,37 +8,37 @@
                 "description": "Workspace ID of the OMS workspace"
             }
         },
-        "workspaceKey":{
+        "workspaceKey": {
             "type": "string",
-                "metadata": {
-                    "description": "Workspace key of the OMS workspace, will be referenced from keyvault"
-                }
+            "metadata": {
+                "description": "Workspace key of the OMS workspace, will be referenced from keyvault"
+            }
         }
-},
-"resources":[
-{
-    "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
-    "name": "[concat(parameters('vmssName'),'/','OMSExtension')]",
-    "apiVersion": "2018-06-01",
-    "location": "[resourceGroup().location]",
-    "metadata":{
-        "description":"Can be used with VM and VMSS, the dependsOn value can be specified at the master template"
     },
-    "dependsOn": [
-      "vmssDeployment"
-    ],
-    "properties": {
-      "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-      "type": "OmsAgentForLinux",
-      "typeHandlerVersion": "1.7",
-      "autoUpgradeMinorVersion": true,
-      "settings": {
-        "workspaceId": "[parameters('workspaceId')]"
-    },
-    "protectedSettings": {
-        "workspaceKey": "[parameters('workspaceKey')]"
-    }
-    }
-  }
-]
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+            "name": "[concat(parameters('vmssName'),'/','OMSExtension')]",
+            "apiVersion": "2018-06-01",
+            "location": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Can be used with VM and VMSS, the dependsOn value can be specified at the master template"
+            },
+            "dependsOn": [
+                "vmssDeployment"
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "OmsAgentForLinux",
+                "typeHandlerVersion": "1.7",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[parameters('workspaceId')]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[parameters('workspaceKey')]"
+                }
+            }
+        }
+    ]
 }

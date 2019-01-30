@@ -9,39 +9,32 @@
             }
         },
         "vnetAddressPrefix": {
-                "type": "string",
-                "metadata": {
-                    "description": "The IP Address pool for the virtual network in CIDR format."
-                }
+            "type": "string",
+            "metadata": {
+                "description": "The IP Address pool for the virtual network in CIDR format."
             }
-},
-"resources":[                
-    {
-        "type": "Microsoft.Network/virtualNetworks",
-        "name": "[parameters('vnetName')]",
-        "apiVersion": "2016-03-30",
-        "location": "[resourceGroup().location]",
-        "tags":
-        {
-    
         },
-        "properties": {
-            "addressSpace": {
-                "addressPrefixes": [
-                    "[parameters('vnetAddressPrefix')]"
-                ]
+        "vnetAddressPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP Address pool for the virtual network in CIDR format."
             }
         }
-    }
-],
-"outputs": {
-    "returnedVnetName": {
-        "type": "string",
-        "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
     },
-    "returnedVnetAddressPrefix": {
-        "type": "string",
-        "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetAddressPrefix'))]"
-    }
-}
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetAddressPrefix')]"
+                    ]
+                }
+            },
+        }
+    ]
 }

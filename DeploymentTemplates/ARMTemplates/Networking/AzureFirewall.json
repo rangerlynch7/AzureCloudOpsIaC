@@ -1,0 +1,116 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Virtual Network"
+      }
+    }
+  },
+  "variables": {
+    "firewallName": "AzureFirewall",
+    "firewallPublicIPName": "AzureFirewallIP",
+    "azureFirewallSubnetName": "AzureFirewallSubnet",
+    "azureFirewallSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('vnetName'), variables('azureFirewallSubnetName'))]",
+    "azureFirewallPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('firewallPublicIPName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Network/azureFirewalls",
+      "name": "[variables('firewallName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('firewallPublicIPName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "subnet": {
+                "id": "[variables('azureFirewallSubnetId')]"
+              },
+              "InternalPublicIPAddress": {
+                "id": "[variables('azureFirewallPublicIpId')]"
+              }
+            }
+          }
+        ],
+        "applicationRuleCollections": [
+          {
+            "name": "appRc1",
+            "properties": {
+              "priority": 100,
+              "action": {
+                "type": "Allow"
+              },
+              "rules": [
+                {
+                  "name": "appRule1",
+                  "protocols": [
+                    {
+                      "port": "80",
+                      "protocolType": "http"
+                    },
+                    {
+                      "port": "443",
+                      "protocolType": "https"
+                    }
+                  ],
+                  "targetUrls": [
+                    "*microsoft.com"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "networkRuleCollections": [
+          {
+            "name": "netRc1",
+            "properties": {
+              "priority": 200,
+              "action": {
+                "type": "Allow"
+              },
+              "rules": [
+                {
+                  "name": "netRule1",
+                  "protocols": [
+                    "TCP"
+                  ],
+                  "sourceAddresses": [
+                    "192.168.2.0/24"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "8000-8999"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('firewallPublicIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-10-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4"
+      }
+    }
+  ]
+}

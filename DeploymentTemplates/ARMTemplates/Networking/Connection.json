@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vNet1Name": {
-            "type":"string",
+            "type": "string",
             "metadata": {
                 "description": "Name for vNet 1"
             }
@@ -39,24 +39,24 @@
     },
     "resources": [
         {
-           "apiVersion": "2016-06-01",
+            "apiVersion": "2016-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
             "name": "[concat(parameters('vNet1Name'),'/',(variables('vNet1tovNet2PeeringName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                       "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet1Name'))]",
-                       "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet2Name'))]"
-                   ],
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet1Name'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet2Name'))]"
+            ],
             "comments": "This is the peering from vNet 1 to vNet 2",
             "properties": {
-                       "allowVirtualNetworkAccess": "true",
-                       "allowForwardedTraffic": "false",
-                       "allowGatewayTransit": "false",
-                       "useRemoteGateways": "false",
-                       "remoteVirtualNetwork": {
-                           "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vNet2Name'))]"
-                       }
-                   }
+                "allowVirtualNetworkAccess": "true",
+                "allowForwardedTraffic": "false",
+                "allowGatewayTransit": "false",
+                "useRemoteGateways": "false",
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vNet2Name'))]"
+                }
+            }
         },
         {
             "apiVersion": "2016-06-01",
@@ -64,19 +64,19 @@
             "name": "[concat(parameters('vNet2Name'),'/',(variables('vNet2tovNet1PeeringName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                       "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet1Name'))]",
-                       "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet2Name'))]"
-                   ],
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet1Name'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('vNet2Name'))]"
+            ],
             "comments": "This is the peering from vNet 2 to vNet 1",
             "properties": {
-                       "allowVirtualNetworkAccess": "true",
-                       "allowForwardedTraffic": "false",
-                       "allowGatewayTransit": "false",
-                       "useRemoteGateways": "false",
-                       "remoteVirtualNetwork": {
-                           "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vNet1Name'))]"
-                       }
-                   }
+                "allowVirtualNetworkAccess": "true",
+                "allowForwardedTraffic": "false",
+                "allowGatewayTransit": "false",
+                "useRemoteGateways": "false",
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vNet1Name'))]"
+                }
+            }
         }
     ]
 }

@@ -1,0 +1,616 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Virtual Network"
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP Address pool for the virtual network in CIDR format."
+      }
+    },
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Network Security Group."
+      }
+    },
+    "securityRules.Name": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Security Rule."
+      }
+    },
+    "securityRules.properties.protocol": {
+      "type": "string",
+      "allowedValues": [
+        "TCP",
+        "UDP"
+      ],
+      "metadata": {
+        "description": "Protocol of the Security Rule, select from allowed values."
+      }
+    },
+    "securityRules.properties.sourcePortRange": {
+      "type": "string",
+      "metadata": {
+        "description": "Source Address Range of the Security Rule, can be Internet or any exisitng network/subnets."
+      }
+    },
+    "securityRules.properties.destinationPortRange": {
+      "type": "string",
+      "metadata": {
+        "description": "Destination Address Range of the Security Rule, can be any existing network/subnets."
+      }
+    },
+    "securityRules.properties.destinationAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The Destination IP Address pool for the NSG in CIDR format."
+      }
+    },
+    "securityRules.properties.access": {
+      "type": "string",
+      "allowedValues": [
+        "Allow",
+        "Deny"
+      ],
+      "metadata": {
+        "description": "Access type of the NSG, either Allow or Deny traffic."
+      }
+    },
+    "securityRules.properties.priority": {
+      "type": "string",
+      "metadata": {
+        "description": "Priority number of the rule, preferably have the format in hundreds, eg: 100,200,300 etc."
+      }
+    },
+    "securityRules.properties.direction": {
+      "type": "string",
+      "allowedValues": [
+        "Inbound",
+        "Outbound"
+      ],
+      "metadata": {
+        "description": "Direction allowed by the Security group for traffic flow, could be either Inbound or Outbound"
+      }
+    },
+    "azureFirewallSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Address Prefix of the Firewall subnet, prefer to have 10.x.255.0/24 as a standard practice"
+      }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP Address pool for the Subnet in CIDR format."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Subnet"
+      }
+    },
+    "nextHopIP": {
+      "type": "string",
+      "metadata": {
+        "description": "The next hop ip, this should be an address in the firewall subnet"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "Type of the Storage Account, please choose from allowed values"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Storage Account, must be unique as it has a FQDN"
+      }
+    },
+    "storageAccountKind": {
+      "type": "string",
+      "allowedValues": [
+        "Storage",
+        "StorageV2",
+        "BlobStorage",
+        "FileStorage",
+        "BlockBlobStorage"
+      ],
+      "metadata": {
+        "description": "Storage Account kind"
+      }
+    },
+    "vmSku": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_A5",
+        "Standard_A6",
+        "Standard_A7",
+        "Standard_A8",
+        "Standard_A1_v2",
+        "Standard_A2_v2",
+        "Standard_A4_v2",
+        "Standard_A8_v2",
+        "Standard_D1",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D11",
+        "Standard_D12",
+        "Standard_D13",
+        "Standard_D14",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_D4_v2",
+        "Standard_D5_v2",
+        "Standard_D11_v2",
+        "Standard_D12_v2",
+        "Standard_D13_v2",
+        "Standard_D14_v2"
+      ],
+      "defaultValue": "Standard_A1",
+      "metadata": {
+        "description": "App VM size to provision. See https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs"
+      }
+    },
+    "vmssName": {
+      "type": "string",
+      "metadata": {
+        "description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
+      },
+      "maxLength": 61
+    },
+    "instanceCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of VM instances (100 or less)."
+      },
+      "defaultValue": 2,
+      "maxValue": 100
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin username on all VMs."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password on all VMs."
+      }
+    },
+    "imageReference.publisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the image publisher"
+      }
+    },
+    "imageReference.offer": {
+      "type": "string",
+      "metadata": {
+        "description": "Version of the image"
+      }
+    },
+    "imageReference.sku": {
+      "type": "string",
+      "metadata": {
+        "description": "Sku of the image specified"
+      }
+    },
+    "imageReference.version": {
+      "type": "string",
+      "defaultValue": "latest",
+      "metadata": {
+        "description": "Version of the image"
+      }
+    },
+    "lbName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Load Balancer"
+      }
+    },
+    "publicIPAllocationMethod": {
+      "type": "string",
+      "allowedValues": [
+        "Static",
+        "Dynamic"
+      ],
+      "metadata": {
+        "description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
+      }
+    },
+    "capacity.minimum": {
+      "type": "int",
+      "metadata": {
+        "description": "Minimum number of VMs in the Scale Set"
+      }
+    },
+    "capacity.maximum": {
+      "type": "int",
+      "metadata": {
+        "description": "Maximum number of VMs in the Scale Set"
+      }
+    },
+    "capacity.default": {
+      "type": "int",
+      "metadata": {
+        "description": "Default number of VMs in the Scale Set"
+      }
+    },
+    "metricTrigger.increaseThreshold": {
+      "type": "int",
+      "metadata": {
+        "description": "Threshold value for metric before adding an instance"
+      }
+    },
+    "metricTrigger.decreaseThreshold": {
+      "type": "int",
+      "metadata": {
+        "description": "Threshold value for metric"
+      }
+    }
+  },
+  "variables": {
+    "templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/ARMIntegrationTest/master/",
+    "virtualNetworkTemplateUrl": "[concat(variables('templateBaseUrl'), 'VirtualNetwork.json')]",
+    "nsgTemplateUrl": "[concat(variables('templateBaseUrl'), 'NetworkSecurityGroup.json')]",
+    "subnetTemplateUrl": "[concat(variables('templateBaseUrl'), 'Subnet.json')]",
+    "networkFirewallTemplateUrl": "[concat(variables('templateBaseUrl'), 'AzureFirewall.json')]",
+    "storageAccountTemplateUrl": "[concat(variables('templateBaseUrl'), 'StorageAccount.json')]",
+    "vmssTemplateUrl": "[concat(variables('templateBaseUrl'), 'Vmss.json')]",
+    "lbTemplateUrl": "[concat(variables('templateBaseUrl'), 'LoadBalancer.json')]",
+    "publicIPTemplateUrl": "[concat(variables('templateBaseUrl'), 'PublicIP.json')]",
+    "azFirewallTemplateUrl": "[concat(variables('templateBaseUrl'), 'AzureFirewall.json')]",
+    "routeTableTemplateUrl": "[concat(variables('templateBaseUrl'), 'RouteTable.json')]",
+    "nicTemplateUrl": "[concat(variables('templateBaseUrl'), 'NetworkInterface.json')]",
+    "autoScaleDeployment": "[concat(variables('templateBaseUrl'), 'AutoScale.json')]",
+    "firewallSubnetName": "AzureFirewallName",
+    "azfwRouteTableName": "AzfwRouteTable",
+    "publicIPAddressName": "[concat(parameters('vmssName'), '-pip')]",
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "VnetDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('virtualNetworkTemplateUrl')]"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('vnetAddressPrefix')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "nsgDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nsgTemplateUrl')]"
+        },
+        "parameters": {
+          "nsgName": {
+            "value": "[parameters('nsgName')]"
+          },
+          "securityRules.Name": {
+            "value": "[parameters('securityRules.Name')]"
+          },
+          "securityRules.properties.protocol": {
+            "value": "[variables('securityRules.properties.protocol')]"
+          },
+          "securityRules.properties.sourcePortRange": {
+            "value": "[parameters('securityRules.properties.sourcePortRange')]"
+          },
+          "securityRules.properties.destinationPortRange": {
+            "value": "[variables('securityRules.properties.destinationPortRange')]"
+          },
+          "securityRules.properties.sourceAddressPrefix": {
+            "value": "[parameters('subnetPrefix')]"
+          },
+          "securityRules.properties.destinationAddressPrefix": {
+            "value": "[variables('securityRules.properties.destinationAddressPrefix')]"
+          },
+          "securityRules.properties.access": {
+            "value": "[parameters('securityRules.properties.access')]"
+          },
+          "securityRules.properties.priority": {
+            "value": "[parameters('securityRules.properties.priority')]"
+          },
+          "securityRules.properties.direction": {
+            "value": "[parameters('securityRules.properties.direction')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "SubnetDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+        },
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', variables('azfwRouteTableName'))]"
+        },
+        "templateLink": {
+          "uri": "[variables('subnetTemplateUrl')]"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('vnetAddressPrefix')]"
+          },
+          "subnetName": {
+            "value": "[variables('subnetName')]"
+          },
+          "subnetPrefix": {
+            "value": "[parameters('subnetPrefix')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "VnetDeployment",
+        "nsgDeployment",
+        "routeTableDeployment"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "routeTableDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('routeTableTemplateUrl')]"
+        },
+        "parameters": {
+          "nextHopIP": {
+            "value": "[parameters('nextHopIP')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "firewallSubnetDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('subnetTemplateUrl')]"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('vnetAddressPrefix')]"
+          },
+          "subnetName": {
+            "value": "[variables('firewallSubnetName')]"
+          },
+          "subnetPrefix": {
+            "value": "[parameters('azureFirewallSubnetPrefix')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "VnetDeployment"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "azFirewallDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('azFirewallTemplateUrl')]"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "VnetDeployment"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "storageAccountDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('storageAccountTemplateUrl')]"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "storageAccountType": {
+            "value": "[parameters('storageAccountType')]"
+          },
+          "storageAccountKind": {
+            "value": "[parameters('storageAccountKind')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "vmssDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vmssTemplateUrl')]"
+        },
+        "parameters": {
+          "vmSku": {
+            "value": "[parameters('vmSku')]"
+          },
+          "vmssName": {
+            "value": "[parameters('vmssName')]"
+          },
+          "instanceCount": {
+            "value": "[parameters('instanceCount')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "imageReference.publisher": {
+            "value": "[parameters('imageReference.publisher')]"
+          },
+          "imageReference.offer": {
+            "value": "[parameters('imageReference.offer')]"
+          },
+          "imageReference.sku": {
+            "value": "[parameters('imageReference.sku')]"
+          },
+          "imageReference.version": {
+            "value": "[parameters('imageReference.version')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "lbDeployment"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "lbDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('lbTemplateUrl')]"
+        },
+        "parameters": {
+          "lbName": {
+            "value": "[parameters('lbName')]"
+          },
+        }
+      },
+      "dependsOn": [
+        "publicIPDeployment"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "nicDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nicTemplateUrl')]"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "vmssName": {
+            "value": "[parameters('vmssName')]"
+          },
+          "lbName": {
+            "value": "[parameters('lbName')]"
+          },
+        }
+      },
+      "dependsOn": [
+        "lbDeployment"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "publicIPDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('publicIPTemplateUrl')]"
+        },
+        "parameters": {
+          "publicIPAddressName": {
+            "value": "[variables('publicIPAddressName')]"
+          },
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "autoScaleDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('autoScaleDeployment')]"
+        },
+        "parameters": {
+          "capacity.minimum": {
+            "value": "[variables('capacity.minimum')]"
+          },
+          "capacity.maximum": {
+            "value": "[variables('capacity.maximum')]"
+          },
+          "capacity.default": {
+            "value": "[variables('capacity.default')]"
+          },
+          "metricTrigger.increaseThreshold": {
+            "value": "[variables('metricTrigger.increaseThreshold')]"
+          },
+          "metricTrigger.decreaseThreshold": {
+            "value": "[variables('metricTrigger.decreaseThreshold')]"
+          },
+        }
+      },
+      "dependsOn": [
+        "vmssDeployment"
+      ]
+    }
+  ]
+}

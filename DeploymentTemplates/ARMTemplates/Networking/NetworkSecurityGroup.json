@@ -1,109 +1,110 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "nsgName": {
-        "type": "string",
-        "metadata": {
-          "description": "Name of the Network Security Group."
-        }
-      },
-      "securityRules.Name": {
-        "type": "string",
-        "metadata": {
-          "description": "Name of the Security Rule."
-        }
-      },
-      "securityRules.properties.protocol": {
-        "type": "string",
-        "allowedValues":[
-            "TCP",
-            "UDP"
-        ],
-        "metadata": {
-          "description": "Protocol of the Security Rule, select from allowed values."
-        }
-      },
-      "securityRules.properties.sourcePortRange": {
-        "type": "string",
-        "metadata": {
-          "description": "Source Address Range of the Security Rule, can be Internet or any exisitng network/subnets."
-        }
-      },
-      "securityRules.properties.destinationPortRange": {
-        "type": "string",
-        "metadata": {
-          "description": "Destination Address Range of the Security Rule, can be any existing network/subnets."
-        }
-      },
-      "securityRules.properties.sourceAddressPrefix": {
-        "type": "string",
-        "metadata": {
-          "description": "The Source IP Address pool for the NSG in CIDR format."
-        }
-      },
-      "securityRules.properties.destinationAddressPrefix": {
-        "type": "string",
-        "metadata": {
-          "description": "The Destination IP Address pool for the NSG in CIDR format."
-        }
-      },
-      "securityRules.properties.access": {
-        "type": "string",
-        "allowedValues":[
-            "Allow",
-            "Deny"
-        ],
-        "metadata": {
-          "description": "Access type of the NSG, either Allow or Deny traffic."
-        }
-      },
-      "securityRules.properties.priority": {
-        "type": "string",
-        "metadata": {
-          "description": "Priority number of the rule, preferably have the format in hundreds, eg: 100,200,300 etc."
-        }
-      },
-      "securityRules.properties.direction": {
-        "type": "string",
-        "allowedValues":[
-            "Inbound",
-            "Outbound"
-        ],
-        "metadata": {
-          "description": "Direction allowed by the Security group for traffic flow, could be either Inbound or Outbound"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Network Security Group."
       }
-      },
-      "resources":[
-        {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters('nsgName')]",
-            "apiVersion": "2016-03-30",
-            "location": "[resourceGroup().location]",
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP Address pool for the Subnet in CIDR format."
+      }
+    },
+    "securityRules.Name": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Security Rule."
+      }
+    },
+    "securityRules.properties.protocol": {
+      "type": "string",
+      "allowedValues": [
+        "TCP",
+        "UDP"
+      ],
+      "metadata": {
+        "description": "Protocol of the Security Rule, select from allowed values."
+      }
+    },
+    "securityRules.properties.sourcePortRange": {
+      "type": "string",
+      "metadata": {
+        "description": "Source Address Range of the Security Rule, can be Internet or any exisitng network/subnets."
+      }
+    },
+    "securityRules.properties.destinationPortRange": {
+      "type": "string",
+      "metadata": {
+        "description": "Destination Address Range of the Security Rule, can be any existing network/subnets."
+      }
+    },
+    "securityRules.properties.sourceAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Destination Address Range of the Security Rule, can be any existing network/subnets."
+      }
+    },
+    "securityRules.properties.destinationAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The Destination IP Address pool for the NSG in CIDR format."
+      }
+    },
+    "securityRules.properties.access": {
+      "type": "string",
+      "allowedValues": [
+        "Allow",
+        "Deny"
+      ],
+      "metadata": {
+        "description": "Access type of the NSG, either Allow or Deny traffic."
+      }
+    },
+    "securityRules.properties.priority": {
+      "type": "string",
+      "metadata": {
+        "description": "Priority number of the rule, preferably have the format in hundreds, eg: 100,200,300 etc."
+      }
+    },
+    "securityRules.properties.direction": {
+      "type": "string",
+      "allowedValues": [
+        "Inbound",
+        "Outbound"
+      ],
+      "metadata": {
+        "description": "Direction allowed by the Security group for traffic flow, could be either Inbound or Outbound"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('nsgName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "[parameters('securityRules.Name')]",
             "properties": {
-                "securityRules": [
-                    {
-                        "name": "[parameters('securityRules.Name')]",
-                        "properties": {
-                            "protocol": "[parameters('securityRules.properties.protocol')]",
-                            "sourcePortRange": "[parameters('securityRules.properties.sourcePortRange')]",
-                            "destinationPortRange": "[parameters('securityRules.properties.destinationPortRange')]",
-                            "sourceAddressPrefix": "[parameters('securityRules.properties.sourceAddressPrefix')]",
-                            "destinationAddressPrefix": "[parameters('securityRules.properties.destinationAddressPrefix')]",
-                            "access": "[parameters('securityRules.properties.access')]",
-                            "priority": "[parameters('securityRules.properties.priority')]",
-                            "direction": "[parameters('securityRules.properties.direction')]"
-                        }
-                    }
-                ]
+              "protocol": "[parameters('securityRules.properties.protocol')]",
+              "sourcePortRange": "[parameters('securityRules.properties.sourcePortRange')]",
+              "destinationPortRange": "[parameters('securityRules.properties.destinationPortRange')]",
+              "sourceAddressPrefix": "[parameters('securityRules.properties.sourceAddressPrefix')]",
+              "destinationAddressPrefix": "[parameters('securityRules.properties.destinationAddressPrefix')]",
+              "access": "[parameters('securityRules.properties.access')]",
+              "priority": "[parameters('securityRules.properties.priority')]",
+              "direction": "[parameters('securityRules.properties.direction')]"
             }
-        }
-    ],
-        "outputs": {
-            "returnedNSGRuleName": {
-                "type": "string",
-                "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vnetName'))]"
-            }
+          }
+        ]
+      }
+    }
+  ],
 }
 }
