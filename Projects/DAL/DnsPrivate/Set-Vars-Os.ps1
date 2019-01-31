@@ -1,6 +1,6 @@
-# $clusterLoginPassword=""
+# $HdiLoginPassword=""
 # $objectId=""
-# $sshPassword=""
+# $HdiSshPassword=""
 # $tenantId=""""
 $Context=Get-AzureRmContext
 $locationcode="cc"

@@ -2,13 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "ClusterName": {
+        "HdiClusterName": {
             "type": "string",
             "metadata": {
                 "description": "Cluster Name"
             }
         },
-        "ClusterVersion": {
+        "HdiVersion": {
             "defaultValue": "4.0",
             "type": "string",
             "metadata": {
@@ -22,20 +22,20 @@
                 "description": "storage container in Clusterstorageaccount with artifacts"
             }
         },
-        "SrvPass": {
+        "CertSrvPass": {
             "type": "securestring",
             "metadata": {
                 "description": "Keypass & Storepass to access jks file"
             }
         },
-        "ClusterWorkerNodeCount": {
+        "HdiCountWorker": {
             "defaultValue": 3,
             "type": "int",
             "metadata": {
                 "description": "number of Cluster Worker Nodes"
             }
         },
-        "ClusterZookeeperNodeCount": {
+        "HdiCountZookeeper": {
             "defaultValue": 3,
             "type": "int",
             "metadata": {
@@ -54,120 +54,108 @@
                 "kafka",
                 "spark"
             ],
+            "defaultValue": "kafka",
             "type": "string",
             "metadata": {
                 "description": "ClusterKind of Cluster: spark, kafka etc."
             }
         },
-        "ClusterLoginPassword": {
+        "HdiLoginPassword": {
             "type": "securestring",
             "metadata": {
                 "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
             }
         },
-        "ClusterLoginUserName": {
+        "HdiLoginUserName": {
             "defaultValue": "admin",
             "type": "string",
             "metadata": {
                 "description": "These credentials can be used to submit jobs to the Cluster and to log into Cluster dashboards."
             }
         },
-        "ScriptContainer": {
-            "defaultValue": "scripts",
-            "type": "string",
-            "metadata": {
-                "description": "storage container in Clusterstorageaccount with artifacts"
-            }
-        },
-        "ScriptNodeHead": {
+        "HdiScriptUriHead": {
             "defaultValue": "hdinsight-kafka-head.sh",
             "type": "string"
         },
-        "ScriptNodeWorker": {
+        "HdiScriptUriWorker": {
             "defaultValue": "hdinsight-kafka-worker.sh",
             "type": "string"
         },
-        "ScriptNodeZookeeper": {
+        "HdiScriptUriZookeeper": {
             "defaultValue": "hdinsight-kafka-zookeeper.sh",
             "type": "string"
         },
-        "SshPassword": {
+        "HdiSshPassword": {
             "type": "securestring",
             "metadata": {
                 "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
             }
         },
-        "SshUserName": {
+        "HdiSshUserName": {
             "defaultValue": "sshuser",
             "type": "string",
             "metadata": {
                 "description": "These credentials can be used to remotely access the Cluster."
             }
         },
-        "StorageAccountName": {
+        "HdiStorageAccountName": {
             "type": "string",
             "metadata": {
                 "description": "storage account name"
             }
         },
-        "ScriptStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "storage account name"
-            }
+        "HdiComponentVersionKafka": {
+            "defaultValue": "1.1",
+            "type": "string"
         },
-        "VmSizeHeadNode": {
+        "HdiVmSizeHeadNode": {
             "defaultValue": "large",
             "type": "string"
         },
-        "VmSizeWorkerNode": {
+        "HdiVmSizeWorkerNode": {
             "defaultValue": "large",
             "type": "string"
         },
-        "VmSizeZookeeperNode": {
+        "HdiVmSizeZookeeperNode": {
             "defaultValue": "medium",
             "type": "string"
         },
         "VNetId": {
             "type": "string"
         },
-        "VNetSubnetName": {
+        "HdiVNetSubnetName": {
             "type": "string"
         },
-        "Tier": {
+        "HdiTier": {
             "defaultValue": "Standard",
             "type": "string"
         }
     },
     "variables": {
-        "ClusterName": "[concat(parameters('ClusterName'))]",
-        "ScriptParameters": "[concat(' -a ',parameters('ArtifactsFolder'),' -u ',parameters('ClusterLoginUserName'),' -p ',parameters('ClusterLoginPassword'),' -k ',parameters('SrvPass'),' -s ',parameters('SrvPass'))]",
-        "ScriptUriBase": "[concat('https://',parameters('ScriptStorageAccountName'),'.blob.core.windows.net/',parameters('ScriptContainer'),'/')]",
-        "ScriptUriHead": "[concat(variables('ScriptUriBase'),parameters('ScriptNodeHead'))]",
-        "ScriptUriWorker": "[concat(variables('ScriptUriBase'),parameters('ScriptNodeWorker'))]",
-        "ScriptUriZookeeper": "[concat(variables('ScriptUriBase'),parameters('ScriptNodeZookeeper'))]",
-        "VNetSubnetRef": "[concat(parameters('VNetId'), '/subnets/', parameters('VNetSubnetName'))]"
+        "HdiClusterName": "[concat(parameters('HdiClusterName'))]",
+        "ScriptParameters": "[concat(' -a ',parameters('ArtifactsFolder'),' -u ',parameters('HdiLoginUserName'),' -p ',parameters('HdiLoginPassword'),' -k ',parameters('CertSrvPass'),' -s ',parameters('CertSrvPass'))]",
+        "VNetSubnetRef": "[concat(parameters('VNetId'), '/subnets/', parameters('HdiVNetSubnetName'))]"
     },
     "resources": [
         {
-            "type": "Microsoft.HDInsight/Clusters",
-            "name": "[variables('ClusterName')]",
+            "type": "Microsoft.HDInsight/clusters",
+            "name": "[variables('HdiClusterName')]",
             "apiVersion": "2015-03-01-preview",
             "location": "[resourceGroup().location]",
             "properties": {
-                "ClusterVersion": "[parameters('ClusterVersion')]",
+                "clusterVersion": "[parameters('HdiVersion')]",
                 "osType": "Linux",
-                "tier": "[parameters('tier')]",
+                "tier": "[parameters('HdiTier')]",
                 "ClusterDefinition": {
                     "Kind": "[parameters('ClusterKind')]",
                     "componentVersion": {
-                        "Kafka": "1.1"
+                        "Kafka": "[parameters('HdiComponentVersionKafka')]"
                     },
                     "configurations": {
                         "gateway": {
                             "restAuthCredential.isEnabled": true,
-                            "restAuthCredential.password": "[parameters('ClusterLoginPassword')]",
-                            "restAuthCredential.username": "[parameters('ClusterLoginUserName')]"
+                            "restAuthCredential.username": "[parameters('HdiLoginUserName')]",
+                            "restAuthCredential.password": "[parameters('HdiLoginPassword')]"
                         }
                     }
                 },
@@ -175,14 +163,14 @@
                     "roles": [
                         {
                             "hardwareProfile": {
-                                "vmSize": "[parameters('VmSizeHeadNode')]"
+                                "vmSize": "[parameters('HdiVmSizeHeadNode')]"
                             },
                             "name": "headnode",
                             "minInstanceCount": 1,
                             "osProfile": {
                                 "linuxOperatingSystemProfile": {
-                                    "password": "[parameters('SshPassword')]",
-                                    "username": "[parameters('SshUserName')]"
+                                    "password": "[parameters('HdiSshPassword')]",
+                                    "username": "[parameters('HdiSshUserName')]"
                                 }
                             },
                             "scriptActions": [
@@ -190,7 +178,7 @@
                                     "isHeadNode": true,
                                     "name": "head",
                                     "parameters": "[variables('ScriptParameters')]",
-                                    "uri": "[variables('ScriptUriHead')]"
+                                    "uri": "[parameters('HdiScriptUriHead')]"
                                 }
                             ],
                             "targetInstanceCount": 2,
@@ -201,7 +189,7 @@
                         },
                         {
                             "hardwareProfile": {
-                                "vmSize": "[parameters('VmSizeWorkerNode')]"
+                                "vmSize": "[parameters('HdiVmSizeWorkerNode')]"
                             },
                             "name": "workernode",
                             "dataDisksGroups": [
@@ -211,8 +199,8 @@
                             ],
                             "osProfile": {
                                 "linuxOperatingSystemProfile": {
-                                    "password": "[parameters('SshPassword')]",
-                                    "username": "[parameters('SshUserName')]"
+                                    "password": "[parameters('HdiSshPassword')]",
+                                    "username": "[parameters('HdiSshUserName')]"
                                 }
                             },
                             "scriptActions": [
@@ -220,10 +208,10 @@
                                     "isWorkerNode": true,
                                     "name": "worker",
                                     "parameters": "[variables('ScriptParameters')]",
-                                    "uri": "[variables('ScriptUriWorker')]"
+                                    "uri": "[parameters('HdiScriptUriWorker')]"
                                 }
                             ],
-                            "targetInstanceCount": "[parameters('ClusterWorkerNodeCount')]",
+                            "targetInstanceCount": "[parameters('HdiCountWorker')]",
                             "virtualNetworkProfile": {
                                 "id": "[parameters('VNetId')]",
                                 "subnet": "[variables('VNetSubnetRef')]"
@@ -231,14 +219,14 @@
                         },
                         {
                             "hardwareProfile": {
-                                "vmSize": "[parameters('VmSizeZookeeperNode')]"
+                                "vmSize": "[parameters('HdiVmSizeZookeeperNode')]"
                             },
                             "name": "zookeepernode",
                             "minInstanceCount": 1,
                             "osProfile": {
                                 "linuxOperatingSystemProfile": {
-                                    "username": "[parameters('SshUserName')]",
-                                    "password": "[parameters('SshPassword')]"
+                                    "username": "[parameters('HdiSshUserName')]",
+                                    "password": "[parameters('HdiSshPassword')]"
                                 }
                             },
                             "scriptActions": [
@@ -246,10 +234,10 @@
                                     "isWorkerNode": true,
                                     "name": "zookeeper",
                                     "parameters": "[variables('ScriptParameters')]",
-                                    "uri": "[variables('ScriptUriZookeeper')]"
+                                    "uri": "[parameters('HdiScriptUriZookeeper')]"
                                 }
                             ],
-                            "targetInstanceCount": "[parameters('ClusterZookeeperNodeCount')]",
+                            "targetInstanceCount": "[parameters('HdiCountZookeeper')]",
                             "virtualNetworkProfile": {
                                 "id": "[parameters('VNetId')]",
                                 "subnet": "[variables('VNetSubnetRef')]"
@@ -260,10 +248,10 @@
                 "storageProfile": {
                     "storageaccounts": [
                         {
-                            "container": "[parameters('ClusterName')]",
+                            "container": "[parameters('HdiClusterName')]",
                             "isDefault": true,
-                            "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2015-05-01-preview').key1]",
-                            "name": "[concat(parameters('StorageAccountName'),'.blob.core.windows.net')]"
+                            "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('HdiStorageAccountName')), '2015-05-01-preview').key1]",
+                            "name": "[concat(parameters('HdiStorageAccountName'),'.blob.core.windows.net')]"
                         }
                     ]
                 }
@@ -275,18 +263,6 @@
         "ScriptParameters": {
             "type": "string",
             "value": "[variables('ScriptParameters')]"
-        },
-        "ScriptUriHead": {
-            "type": "string",
-            "value": "[variables('ScriptUriHead')]"
-        },
-        "ScriptUriWorker": {
-            "type": "string",
-            "value": "[variables('ScriptUriWorker')]"
-        },
-        "ScriptUriZookeeper": {
-            "type": "string",
-            "value": "[variables('ScriptUriZookeeper')]"
         }
     }
 }

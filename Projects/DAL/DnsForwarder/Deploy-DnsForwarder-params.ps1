@@ -5,24 +5,24 @@ $TemplateFile = "arm-$DeployType.json"
 # $Template.Keys
 # $Template.resources
 
-. ./Set-VarsOs.ps1
-$resourceGroupName = $HdiResourceGroupName
+# Setup
+$ScriptItem=$MyInvocation.MyCommand.Path | get-childitem
+$ScriptItem.Directory | set-location
+$BaseDir=$ScriptItem.Directory.Parent.FullName
+"BaseDir=$BaseDir"
+. $BaseDir/Set-Vars.ps1
+
+# exit
 
 # validation
+$resourceGroupName = $HdiResourceGroupName
 Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Stop | out-null
 $VNet = Get-AzureRmVirtualNetwork -WarningAction SilentlyContinue | ? Name -eq $VNetName
 if ($null -eq $VNet.Id) {throw "VNetId null"}
-if ($vnet.Subnets.Name -notcontains $VNetSubnetName) { throw "[$VNetSubnetName] subnet is not one of the available [$($vnet.Subnets.Name -join ",")]" }
+if ($vnet.Subnets.Name -notcontains $HdiVNetSubnetName) { throw "[$HdiVNetSubnetName] subnet is not one of the available [$($vnet.Subnets.Name -join ",")]" }
 
 # upload setup script & generate sas token
-$StorageAccount=Get-AzureRmStorageAccount | ? StorageAccountName -eq $PrjScriptStorageAccountName
-if ($null -eq $StorageAccount) { Throw "$StorageAccount not found" }
-Get-AzureStorageContainer -Context $StorageAccount.Context -Name $PrjScriptStorageContainerName -ErrorAction Stop | out-null
-$FullName=Get-ChildItem -Path $DnsForwardScriptName -ErrorAction Stop | % FullName
-$ICloudBlob=Set-AzureStorageBlobContent -File $FullName -Container $PrjScriptStorageContainerName -Blob $DnsForwardScriptName -Context $StorageAccount.Context -BlobType Block -Force 
-$StartTime = Get-Date; $EndTime = $startTime.AddHours(2.0)
-$SASToken=New-AzureStorageBlobSASToken -Container $PrjScriptStorageContainerName -Blob $DnsForwardScriptName -Permission rd -ExpiryTime $EndTime -Context $StorageAccount.Context
-$DnsForwardScriptUrl=$ICloudBlob.ICloudBlob.Uri.AbsoluteUri+$SASToken
+$DnsForwardScriptUrl=Get-ChildItem -Filter $DnsForwardScriptName -Recurse | % FullName | % { Send-StorageUri -StorageAccountName $PrjScriptStorageAccountName -FilePath $_ -ContainerName $PrjScriptStorageContainerName }
 # "curl -o $DnsForwardScriptName `'$DnsForwardScriptUrl`'"
 
 "TemplateParameterObject"
@@ -35,7 +35,7 @@ $TemplateParameterObject = @{
 	DnsZone = $DnsZone
 	VNetName	= $VNetName
 	VNetResourceGroupName	= $VNetResourceGroupName
-	VNetSubnetName	= $VNetSubnetName
+	HdiVNetSubnetName	= $HdiVNetSubnetName
 	VmAdminUsername	= $VmAdminUsername
 	VmDiagStorageAccName	= $VmDiagStorageAccName
 	VmSshPublicKeyData	= $VmSshPublicKeyData

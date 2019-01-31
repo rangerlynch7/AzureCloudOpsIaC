@@ -1,0 +1,35 @@
+AColumnName,rgobjectsharp,INF NPE
+CertClientPass,clientsecret,clientsecret
+CertSrvPass,serversecret,serversecret
+DnsForwardAcl,192.168.50.0/24,10.0.0.0/8
+DnsForwardScriptName,DnsForwardSetup.sh,DnsForwardSetup.sh
+DnsForwardTarget,168.63.129.16,168.63.129.16
+DnsVmName,ccldnsfwd1,ccldnsfwd
+DnsZone,cc.l.az.tygoelelat.local,cclkty.npe-inf.az.rci.rogers.com
+HdiKeyVault,xxx,dalinf-stg-kv2
+HdiLoginPassword,VDG9#4pjCb$3tuR_dAi,VDG9#4pjCb$3tuR_dAi
+HdiLoginUserName,admin,admin
+HdiClusterName,cclkt5,cclkg4dal
+HdiResourceGroupName,cc.l.k,npe-dal-app-rg2
+HdiScriptHead,test-hdinsight-kafka-head.sh,test-hdinsight-kafka-head.sh
+HdiScriptWorker,test-hdinsight-kafka-worker.sh,test-hdinsight-kafka-worker.sh
+HdiScriptZookeeper,test-hdinsight-kafka-zookeeper.sh,test-hdinsight-kafka-zookeeper.sh
+HdiSshPassword,VDG9#4pjCb$3tuR_dAi,VDG9#4pjCb$3tuR_dAi
+HdiSshUserName,sshuser,sshuser
+HdiStorageAccountName,ccltygoelelats,azcestgkafkastrage02
+HdiTier,Standard,Premium
+HdiVersion,4,3.6
+HdiVmSizeHeadNode,Standard_D3_V2,Standard_D3_V2
+HdiVmSizeWorkerNode,Standard_D3_V2,Standard_D3_V2
+HdiVmSizeZookeeperNode,Standard_A4_V2,Standard_A4_V2
+HdiVNetSubnetName,kafka,paas-tier-stg
+HdiCountWorker,3,3
+Location,canadacentral,canadaeast
+PrjScriptStorageAccountName,ccltygoelelats,azcestgkafkastrage02
+PrjScriptStorageContainerName,scripts,scripts
+SubscriptionName,rgobjectsharp,INF NPE
+VmAdminUsername,sshuser,sshuser
+VmDiagStorageAccName,ccltygoelelatk,azcestgkafkastrage02
+VmSshPublicKeyData,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYkaD3buZol9BfMVShPq5B6QBDWorE+WJtJHw6gdamqYOQlkFUm6oTHaLsIX3DtSC5uLelYp9QTiNDxxZdUuchcD/WUHMrs8byuaIvhNiPuQd/y+1ci36LbqRB293Oa5WlM0MsuLpCe0OLff04D00KOBt3Acwyr22NQEIM5iyvE9epfuwqQqaWWg01yyxLIVrzyxAggnY+IDg2UV3eeRMa/C/SJA6SLIaSPNQq15fR2yQYNklq1mvC6TgCjMNjoPRN0oPQTe5Il7U4cUD0kMFy8DnmyE238GjNMWmi1sBpFwIpQ0QqxAvuydTdJ/d04yepNhfHBsEI8QF6Pj/0JgVz brian@macb,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYkaD3buZol9BfMVShPq5B6QBDWorE+WJtJHw6gdamqYOQlkFUm6oTHaLsIX3DtSC5uLelYp9QTiNDxxZdUuchcD/WUHMrs8byuaIvhNiPuQd/y+1ci36LbqRB293Oa5WlM0MsuLpCe0OLff04D00KOBt3Acwyr22NQEIM5iyvE9epfuwqQqaWWg01yyxLIVrzyxAggnY+IDg2UV3eeRMa/C/SJA6SLIaSPNQq15fR2yQYNklq1mvC6TgCjMNjoPRN0oPQTe5Il7U4cUD0kMFy8DnmyE238GjNMWmi1sBpFwIpQ0QqxAvuydTdJ/d04yepNhfHBsEI8QF6Pj/0JgVz brian@macb
+VNetName,cc.l.k,npe-inf-caest-vnet02
+VNetResourceGroupName,cc.l.network,npe-network-rg2

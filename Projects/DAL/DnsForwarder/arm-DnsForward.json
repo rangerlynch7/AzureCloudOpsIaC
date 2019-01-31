@@ -54,10 +54,10 @@
         "description": "VNetName"
       }
     },
-    "VNetSubnetName": {
+    "HdiVNetSubnetName": {
       "type": "string",
       "metadata": {
-        "description": "VNetSubnetName"
+        "description": "HdiVNetSubnetName"
       }
     },
     "VNetResourceGroupName": {
@@ -127,7 +127,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[concat(resourceId(parameters('VnetResourceGroupName'),'Microsoft.Network/virtualNetworks', parameters('VNetName')), '/subnets/', parameters('VNetSubnetName'))]"
+                "id": "[concat(resourceId(parameters('VnetResourceGroupName'),'Microsoft.Network/virtualNetworks', parameters('VNetName')), '/subnets/', parameters('HdiVNetSubnetName'))]"
               }
             }
           }

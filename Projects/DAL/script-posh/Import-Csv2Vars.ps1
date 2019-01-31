@@ -8,7 +8,9 @@ param (
 $Delimiter=","
 $HtParams=[ordered]@{}
 $Objects=get-content $CsvFile -ErrorAction Stop | ConvertFrom-Csv -Delimiter $Delimiter 
-$FirstColumn=$Objects | gm | ? MemberType -eq NoteProperty | select -first 1 | % Name
+$Columns=$Objects | gm | ? MemberType -eq NoteProperty | % Name
+if ($Columns -notcontains $Column) {throw "[$Column] column is not one of the available [$($Columns -join ",")]"}
+$FirstColumn=$Columns| select -first 1 
 $Object=$Objects[0]
 # $Object
 foreach ($Object in $Objects) {

@@ -1,0 +1,20 @@
+{
+  "CertSrvPass": "serversecret",
+  "HdiClusterName": "cclkt5",
+  "HdiLoginPassword": "VDG9#4pjCb$3tuR_dAi",
+  "HdiLoginUserName": "admin",
+  "HdiScriptUriHead": "https://ccltygoelelats.blob.core.windows.net/scripts/test-hdinsight-kafka-head.sh?sv=2018-03-28&sr=b&sig=7JddKrUuO9wkTrtt4SJ4030Jsh8KsPb9CjVXsurzv8U%3D&se=2019-01-31T01%3A15%3A45Z&sp=rd",
+  "HdiScriptUriWorker": "https://ccltygoelelats.blob.core.windows.net/scripts/test-hdinsight-kafka-worker.sh?sv=2018-03-28&sr=b&sig=1H4%2B22N2%2BZp8GwDdKakUnAwahXuVNykhgduvUxEKJHI%3D&se=2019-01-31T01%3A15%3A46Z&sp=rd",
+  "HdiScriptUriZookeeper": "https://ccltygoelelats.blob.core.windows.net/scripts/test-hdinsight-kafka-zookeeper.sh?sv=2018-03-28&sr=b&sig=b%2BY28FGsZSjBqqM%2BkJ3KOBDSVc4wk7FPo45Qu0cWnr8%3D&se=2019-01-31T01%3A15%3A46Z&sp=rd",
+  "HdiSshPassword": "VDG9#4pjCb$3tuR_dAi",
+  "HdiSshUserName": "sshuser",
+  "HdiStorageAccountName": "ccltygoelelats",
+  "HdiTier": "Standard",
+  "HdiVNetSubnetName": "kafka",
+  "HdiVersion": "4.0",
+  "HdiVmSizeHeadNode": "Standard_D3_V2",
+  "HdiVmSizeWorkerNode": "Standard_D3_V2",
+  "HdiVmSizeZookeeperNode": "Standard_A4_V2",
+  "HdiCountWorker": 3,
+  "VNetId": "/subscriptions/c4f2a033-f2ec-458c-b061-ba835af94f0e/resourceGroups/cc.l.network/providers/Microsoft.Network/virtualNetworks/cc.l.k"
+}

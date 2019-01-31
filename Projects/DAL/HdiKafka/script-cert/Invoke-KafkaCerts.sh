@@ -3,7 +3,7 @@
 
 # source Set-Vars.sh
 COMPANYNAME=sal.az.tygoelelat.com
-BASEDIR=$HOME/OneDrive/os-rg-kafka/git-rgk/Kafka/scripts-cert # BASEDIR=`pwd`
+BASEDIR=$HOME/OneDrive/os-rg-kafka/AzureCloudOpsIaC/Projects/DAL/HdiKafka/script-cert # BASEDIR=`pwd`
 
 # General
 BASEDOMAIN=$COMPANYNAME.com
@@ -12,12 +12,12 @@ CADIR=$BASEDIR/ca
 CLIENT=kafka
 CLIPASS=clientpass
 KEYTOOLDNAME="CN=$SUBDOMAIN,O=$COMPANYNAME,OU=Cloud,L=Toronto,ST=Ontario,C=CA" # kafka does not support wildcard in CN
-printf "subjectAltName = @alt_names\n[alt_names]\nDNS.1=*.$SUBDOMAIN" > $OPENSSLEXTFILE # kafka supports wildcard in CN
+printf "subjectAltName = @alt_names\n[alt_names]\nDNS.1=*.$SUBDOMAIN" > $OPENSSLEXTFILE # kafka supports wildcard in SAN only
 cat $OPENSSLEXTFILE; echo
 LC_ALL=C
 OPENSSLCASUBJECT="/C=CA/ST=Ontario/L=Toronto/OU=Cloud/O=$COMPANYNAME/CN=$COMPANYNAME"
 OPENSSLEXTFILE=$BASEDIR/ca/opensslext.txt
-SRVPASS=serversecret
+CertSrvPass=serversecret
 SSLDIR=$BASEDIR/ssl
 STORAGECONTAINER=artifacts
 VALIDITY=365 # Cert validity, in days
