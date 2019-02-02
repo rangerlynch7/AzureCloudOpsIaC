@@ -286,38 +286,25 @@
 			"metadata": {
 				"description": "Workspace key of the OMS workspace, will be referenced from keyvault"
 			}
-		},
-		"diskSkuName": {
-            "type": "string",
-            "defaultValue": "Standard_LRS",
-            "metadata": {
-                "description": "The sku Name of the Data Disk"
-            }
-        },
-        "diskSizeGB": {
-            "type": "int",
-            "defaultValue": 1023,
-            "metadata": {
-                "description": "The sku Name of the Data Disk"
-            }
-        }
+		}
 	},
 	"variables": {
-		"templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/DemoARMTemplate/master/",
-		"virtualNetworkTemplateUrl": "[concat(variables('templateBaseUrl'), 'VirtualNetwork.json')]",
-		"nsgTemplateUrl": "[concat(variables('templateBaseUrl'), 'NetworkSecurityGroup.json')]",
-		"routeTableTemplateUrl": "[concat(variables('templateBaseUrl'), 'RouteTable.json')]",
-		"subnetTemplateUrl": "[concat(variables('templateBaseUrl'), 'Subnet.json')]",
-		"firewallSubnetTemplateUrl": "[concat(variables('templateBaseUrl'), 'FirewallSubnet.json')]",
-		"azFirewallTemplateUrl": "[concat(variables('templateBaseUrl'), 'AzureFirewall.json')]",
-		"storageAccountTemplateUrl": "[concat(variables('templateBaseUrl'), 'StorageAccount.json')]",
-		"publicIPTemplateUrl": "[concat(variables('templateBaseUrl'), 'PublicIP.json')]",
-		"lbTemplateUrl": "[concat(variables('templateBaseUrl'), 'LoadBalancer.json')]",
-		"vmssTemplateUrl": "[concat(variables('templateBaseUrl'), 'Vmss.json')]",
-		"nicTemplateUrl": "[concat(variables('templateBaseUrl'), 'NetworkInterface.json')]",
-		"autoscaleTemplateUrl": "[concat(variables('templateBaseUrl'), 'AutoScale.json')]",
-		"logAnalyticsExtensionforLinux": "[concat(variables('templateBaseUrl'), 'LogAnalyticsExtensionforLinux.json')]",
-		"dataDiskTemplateUrl":"[concat(variables('templateBaseUrl'), 'DataDisk.json')]"
+		"templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/ForkAzureCloudOpsIaC/ARMTemplates/computeNischith/DeploymentTemplates/ARMTemplates/",
+		"computeCoreTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
+		"computeExtensionsTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
+		"networkingTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Networking/')]",
+		"virtualNetworkTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'VirtualNetwork.json')]",
+		"nsgTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkSecurityGroup.json')]",
+		"routeTableTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'RouteTable.json')]",
+		"subnetTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'Subnet.json')]",
+		"firewallSubnetTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'FirewallSubnet.json')]",
+		"azFirewallTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'AzureFirewall.json')]",
+		"publicIPTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'PublicIP.json')]",
+		"lbTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'LoadBalancer.json')]",
+		"vmssTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vmss.json')]",
+		"nicTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]",
+		"autoscaleTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'AutoScale.json')]",
+		"logAnalyticsExtensionforLinux": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionforLinux.json')]"
 	},
 	"resources": [
 		{
