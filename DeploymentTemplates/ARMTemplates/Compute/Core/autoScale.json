@@ -3,11 +3,12 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "vmssName": {
-      "type": "String",
-      "metadata": {
-        "description": "Name of the VMSS"
-      }
-    },
+			"type": "string",
+			"metadata": {
+				"description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
+			},
+			"maxLength": 61
+		},
     "capacity.minimum": {
       "type": "int",
       "metadata": {
@@ -45,9 +46,6 @@
       "apiVersion": "2015-04-01",
       "name": "cpuautoscale",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "vmssDeployment"
-      ],
       "properties": {
         "name": "cpuautoscale",
         "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",

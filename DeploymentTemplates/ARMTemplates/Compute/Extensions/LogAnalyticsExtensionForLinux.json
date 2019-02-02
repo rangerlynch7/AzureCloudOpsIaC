@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "vmssName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Vmss instance"
+            }
+        },
         "workspaceId": {
             "type": "string",
             "metadata": {
@@ -24,9 +30,6 @@
             "metadata": {
                 "description": "Can be used with VM and VMSS, the dependsOn value can be specified at the master template"
             },
-            "dependsOn": [
-                "vmssDeployment"
-            ],
             "properties": {
                 "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                 "type": "OmsAgentForLinux",

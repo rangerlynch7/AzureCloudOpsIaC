@@ -2,16 +2,22 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "skuName": {
+        "vmssName": {
             "type": "string",
-            "deafultValue": "Standard_LRS",
+            "metadata": {
+                "description": "Name of the data disk"
+            }
+        },
+        "diskSkuName": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
             "metadata": {
                 "description": "The sku Name of the Data Disk"
             }
         },
         "diskSizeGB": {
             "type": "int",
-            "deafultValue": 1023,
+            "defaultValue": 1023,
             "metadata": {
                 "description": "The sku Name of the Data Disk"
             }
@@ -24,7 +30,7 @@
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "sku": {
-                "name": "[parameters('skuName')]"
+                "name": "[parameters('diskSkuName')]"
             },
             "properties": {
                 "creationData": {

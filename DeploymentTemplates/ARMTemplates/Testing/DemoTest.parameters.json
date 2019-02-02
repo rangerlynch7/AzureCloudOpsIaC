@@ -75,7 +75,12 @@
       "value": "serveradmin"
     },
     "adminPassword": {
-      "value":"x%bPB47La7Ld"
+      "reference": {
+          "keyVault": {
+              "id": "/subscriptions/686aa72d-4cbd-4651-a3ef-c712895aa458/resourceGroups/Admin/providers/Microsoft.KeyVault/vaults/testarmkeyvaultarch"
+          },
+          "secretName": "adminpassword"
+      }
     },
     "imageReference.publisher": {
       "value": "Canonical"
@@ -88,6 +93,29 @@
     },
     "imageReference.version": {
       "value": "latest"
+    },
+    "capacity.minimum": {
+      "value": 2
+    },
+    "capacity.maximum": {
+      "value": 6
+    },
+    "capacity.default": {
+      "value": 2
+    },
+    "metricTrigger.increaseThreshold": {
+      "value": 75
+    },
+    "metricTrigger.decreaseThreshold": {
+      "value": 20
+    },
+    "workspaceKey": {
+      "reference": {
+          "keyVault": {
+              "id": "/subscriptions/686aa72d-4cbd-4651-a3ef-c712895aa458/resourceGroups/Admin/providers/Microsoft.KeyVault/vaults/testarmkeyvaultarch"
+          },
+          "secretName": "omskey"
+      }
     }
   }
 }

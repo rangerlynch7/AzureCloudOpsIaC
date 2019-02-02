@@ -243,7 +243,64 @@
 			"metadata": {
 				"description": "Version of the image"
 			}
-		}
+		},
+		"capacity.minimum": {
+			"type": "int",
+			"metadata": {
+				"description": "Minimum number of VMs in the Scale Set"
+			}
+		},
+		"capacity.maximum": {
+			"type": "int",
+			"metadata": {
+				"description": "Maximum number of VMs in the Scale Set"
+			}
+		},
+		"capacity.default": {
+			"type": "int",
+			"metadata": {
+				"description": "Default number of VMs in the Scale Set"
+			}
+		},
+		"metricTrigger.increaseThreshold": {
+			"type": "int",
+			"metadata": {
+				"description": "Threshold value for metric before adding an instance"
+			}
+		},
+		"metricTrigger.decreaseThreshold": {
+			"type": "int",
+			"metadata": {
+				"description": "Threshold value for metric"
+			}
+		},
+		"workspaceId": {
+			"type": "string",
+			"defaultValue": "558b56b2-cdfe-47f8-a2d3-0b1dfcf2bcba",
+			"metadata": {
+				"description": "Workspace ID of the OMS workspace"
+			}
+		},
+		"workspaceKey": {
+			"type": "string",
+			"metadata": {
+				"description": "Workspace key of the OMS workspace, will be referenced from keyvault"
+			}
+		},
+		"diskSkuName": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "metadata": {
+                "description": "The sku Name of the Data Disk"
+            }
+        },
+        "diskSizeGB": {
+            "type": "int",
+            "defaultValue": 1023,
+            "metadata": {
+                "description": "The sku Name of the Data Disk"
+            }
+        }
 	},
 	"variables": {
 		"templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/DemoARMTemplate/master/",
@@ -257,9 +314,13 @@
 		"publicIPTemplateUrl": "[concat(variables('templateBaseUrl'), 'PublicIP.json')]",
 		"lbTemplateUrl": "[concat(variables('templateBaseUrl'), 'LoadBalancer.json')]",
 		"vmssTemplateUrl": "[concat(variables('templateBaseUrl'), 'Vmss.json')]",
-		"nicTemplateUrl": "[concat(variables('templateBaseUrl'), 'NetworkInterface.json')]"
+		"nicTemplateUrl": "[concat(variables('templateBaseUrl'), 'NetworkInterface.json')]",
+		"autoscaleTemplateUrl": "[concat(variables('templateBaseUrl'), 'AutoScale.json')]",
+		"logAnalyticsExtensionforLinux": "[concat(variables('templateBaseUrl'), 'LogAnalyticsExtensionforLinux.json')]",
+		"dataDiskTemplateUrl":"[concat(variables('templateBaseUrl'), 'DataDisk.json')]"
 	},
-	"resources": [{
+	"resources": [
+		{
 			"apiVersion": "2017-05-10",
 			"name": "VnetDeployment",
 			"type": "Microsoft.Resources/deployments",
@@ -460,10 +521,10 @@
 					"uri": "[variables('vmssTemplateUrl')]"
 				},
 				"parameters": {
-                    "vnetName": {
+					"vnetName": {
 						"value": "[parameters('vnetName')]"
-                    },
-                    "subnetName": {
+					},
+					"subnetName": {
 						"value": "[parameters('subnetName')]"
 					},
 					"vmSku": {
@@ -502,6 +563,65 @@
 				"VnetDeployment",
 				"SubnetDeployment",
 				"LbDeployment"
+			]
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "AutoscaleDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('autoscaleTemplateUrl')]"
+				},
+				"parameters": {
+					"vmssName": {
+						"value": "[parameters('vmssName')]"
+					},
+					"capacity.minimum": {
+						"value": "[parameters('capacity.minimum')]"
+					},
+					"capacity.maximum": {
+						"value": "[parameters('capacity.maximum')]"
+					},
+					"capacity.default": {
+						"value": "[parameters('capacity.default')]"
+					},
+					"metricTrigger.increaseThreshold": {
+						"value": "[parameters('metricTrigger.increaseThreshold')]"
+					},
+					"metricTrigger.decreaseThreshold": {
+						"value": "[parameters('metricTrigger.decreaseThreshold')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VmssDeployment"
+			]
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "LogAnalyticsExtensionDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('logAnalyticsExtensionforLinux')]"
+				},
+				"parameters": {
+					"vmssName": {
+						"value": "[parameters('vmssName')]"
+					},
+					"workspaceId": {
+						"value": "[parameters('workspaceId')]"
+					},
+					"workspaceKey": {
+						"value": "[parameters('workspaceKey')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VmssDeployment"
 			]
 		}
 	]

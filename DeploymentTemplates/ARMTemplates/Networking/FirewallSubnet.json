@@ -1,41 +1,41 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "vnetName": {
-        "type": "string",
-        "metadata": {
-          "description": "Name of the Virtual Network"
-        }
-      },
-      "vnetAddressPrefix": {
-        "type": "string",
-        "metadata": {
-          "description": "The IP Address pool for the virtual network in CIDR format."
-        }
-      },
-      "subnetPrefix": {
-        "type": "string",
-        "metadata": {
-          "description": "The IP Address pool for the Subnet in CIDR format."
-        }
-      },
-      "subnetName": {
-        "type": "string",
-        "metadata": {
-          "description": "Name of the Subnet"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Virtual Network"
       }
     },
-    "resources": [
-      {
-        "name": "[concat(parameters('vnetName'),'/',parameters('subnetName'))]",
-        "type": "Microsoft.Network/virtualNetworks/subnets",
-        "apiVersion": "2016-03-30",
-        "tags": {},
-        "properties": {
-          "addressPrefix": "[parameters('subnetPrefix')]"
+    "vnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP Address pool for the virtual network in CIDR format."
       }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP Address pool for the Subnet in CIDR format."
       }
-    ]
-  }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Subnet"
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('vnetName'),'/',parameters('subnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2016-03-30",
+      "tags": {},
+      "properties": {
+        "addressPrefix": "[parameters('subnetPrefix')]"
+    }
+    }
+  ]
+}
