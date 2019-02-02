@@ -304,7 +304,7 @@
 		"vmssTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vmss.json')]",
 		"nicTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]",
 		"autoscaleTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'AutoScale.json')]",
-		"logAnalyticsExtensionforLinux": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionforLinux.json')]"
+		"logAnalyticsExtensionforLinux": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionForLinux.json')]"
 	},
 	"resources": [
 		{
