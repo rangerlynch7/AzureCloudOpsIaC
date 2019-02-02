@@ -7,80 +7,101 @@
       "metadata": {
         "description": "Name of the Load Balancer"
       }
+    },
+    "publicIPAllocationMethod": {
+      "type": "string",
+      "defaultValue": "dynamic",
+      "metadata": {
+        "description": "Name of the Load Balancer"
+      }
+    },
+    "vmssName": {
+      "type": "string",
+      "defaultValue": "dynamic",
+      "metadata": {
+        "description": "Name of the Load Balancer"
+      }
     }
   },
   "variables": {
-    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]",
+    "publicIPAddressName":"[concat(parameters('lbName'),'pip')]",
+    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
+    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
+    "loadBalancerFrontEndName": "[concat(parameters('lbName'),'loadBalancerFrontEnd')]",
+    "loadBalancerBackEndName": "[concat(parameters('lbName'),'loadBalancerBackEnd')]",
+    "loadBalancerProbeName": "[concat(parameters('lbName'),'loadBalancerHttpProbe')]",
+    "loadBalancerNatPoolName": "[concat(parameters('lbName'),'loadBalancerNatPool')]"
   },
   "resources": [
     {
-      "apiVersion": "2016-03-30",
-      "name": "[parameters('lbName')]",
       "type": "Microsoft.Network/loadBalancers",
+      "name": "[parameters('lbName')]",
       "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[variables('publicIPAddressID')]"
+        "[variables('publicIPAddressName')]"
       ],
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "LoadBalancerFrontEnd",
+            "name": "[variables('loadBalancerFrontEndName')]",
             "properties": {
               "publicIPAddress": {
-                "id": "[variables('publicIPAddressID')]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
               }
             }
           }
         ],
         "backendAddressPools": [
           {
-            "name": "BackendPool1"
-          }
-        ],
-        "inboundNatRules": [
-          {
-            "name": "ssh",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
-              },
-              "protocol": "tcp",
-              "frontendPortRangeStart": 50000,
-              "frontendPortRangeEnd": 50019,
-              "backendPort": 22
-            }
+            "name": "[variables('loadBalancerBackendName')]"
           }
         ],
         "loadBalancingRules": [
           {
-            "name": "LBRule",
+            "name": "roundRobinLBRule",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbName')), '/frontendIPConfigurations/', variables('loadBalancerFrontEndName'))]"
               },
               "backendAddressPool": {
-                "id": "[variables('lbPoolID')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbName')), '/backendAddressPools/', variables('loadBalancerBackendName'))]"
               },
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "frontendPort": 80,
               "backendPort": 80,
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 5,
               "probe": {
-                "id": "[variables('lbProbeID')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbName')), '/probes/', variables('loadBalancerProbeName'))]"
               }
+            }
+          },
+          {
+            "name": "sshAccess",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbName')), '/frontendIPConfigurations/', variables('loadBalancerFrontEndName'))]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('lbName')), '/backendAddressPools/', variables('loadBalancerBackendName'))]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 22,
+              "backendPort": 22,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5
             }
           }
         ],
         "probes": [
           {
-            "name": "tcpProbe",
+            "name": "[variables('loadBalancerProbeName')]",
             "properties": {
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "port": 80,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
@@ -88,4 +109,18 @@
           }
         ]
       }
+    },
+    {
+      "apiVersion": "2017-06-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPAddressName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('vmssName'),'dns')]"
+        }
+      }
     }
+  ]
+}

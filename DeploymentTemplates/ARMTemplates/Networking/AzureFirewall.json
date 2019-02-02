@@ -7,13 +7,18 @@
       "metadata": {
         "description": "Name of the Virtual Network"
       }
+    },
+    "firewallSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Virtual Network"
+      }
     }
   },
   "variables": {
     "firewallName": "AzureFirewall",
     "firewallPublicIPName": "AzureFirewallIP",
-    "azureFirewallSubnetName": "AzureFirewallSubnet",
-    "azureFirewallSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('vnetName'), variables('azureFirewallSubnetName'))]",
+    "azureFirewallSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('vnetName'), parameters('firewallSubnetName'))]",
     "azureFirewallPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('firewallPublicIPName'))]"
   },
   "resources": [
@@ -23,7 +28,6 @@
       "name": "[variables('firewallName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]",
         "[concat('Microsoft.Network/publicIPAddresses/', variables('firewallPublicIPName'))]"
       ],
       "properties": {
@@ -84,7 +88,7 @@
                     "TCP"
                   ],
                   "sourceAddresses": [
-                    "192.168.2.0/24"
+                    "*"
                   ],
                   "destinationAddresses": [
                     "*"

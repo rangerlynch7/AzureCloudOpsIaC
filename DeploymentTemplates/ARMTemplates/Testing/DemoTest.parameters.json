@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "vnetName": {
-      "value": "testvnet"
+      "value": "demovnet"
     },
     "vnetAddressPrefix": {
       "value": "10.200.0.0/16"
     },
     "nsgName": {
-      "value": "subnet1-nsg"
+      "value": "demosubnet1-nsg"
     },
     "securityRules.Name": {
       "value": "ssh-access"
@@ -38,8 +38,8 @@
     "securityRules.properties.direction": {
       "value": "Inbound"
     },
-    "azureFirewallSubnetPrefix": {
-      "value": "10.200.255.0/24"
+    "nextHopIP": {
+      "value": "10.200.255.4"
     },
     "subnetName": {
       "value": "subnet1"
@@ -47,8 +47,8 @@
     "subnetPrefix": {
       "value": "10.200.1.0/24"
     },
-    "nextHopIP": {
-      "value": "10.200.255.4"
+    "azureFirewallSubnetPrefix": {
+      "value": "10.200.255.0/24"
     },
     "storageAccountName": {
       "value": "nischitharchtest7736"
@@ -60,10 +60,13 @@
       "value": "StorageV2"
     },
     "vmssName": {
-      "value": "demoTest"
+      "value": "demovmss1"
+    },
+    "lbName": {
+      "value": "demovmss1-lb"
     },
     "vmSku": {
-      "value": "Standard_M8-2ms"
+      "value": "Standard_D2_v2"
     },
     "instanceCount": {
       "value": 2
@@ -72,12 +75,7 @@
       "value": "serveradmin"
     },
     "adminPassword": {
-      "reference": {
-        "keyVault": {
-          "id": "/subscriptions/686aa72d-4cbd-4651-a3ef-c712895aa458/resourceGroups/Admin/providers/Microsoft.KeyVault/vaults/testarmkeyvaultarch"
-        },
-        "secretName": "adminPassword"
-      }
+      "value":"x%bPB47La7Ld"
     },
     "imageReference.publisher": {
       "value": "Canonical"
@@ -90,30 +88,6 @@
     },
     "imageReference.version": {
       "value": "latest"
-    },
-    "lbName": {
-      "value": "[concat(parameters('vmssName'),'-lb')]"
-    },
-    "publicIPAddressName": {
-      "value": "[concat(parameters('vmssName'),'-pip')]"
-    },
-    "publicIPAllocationMethod": {
-      "value": "Dynamic"
-    },
-    "capacity.minimum": {
-      "value": 2
-    },
-    "capacity.maximum": {
-      "value": 6
-    },
-    "capacity.default": {
-      "value": 2
-    },
-    "metricTrigger.increaseThreshold": {
-      "value": 75
-    },
-    "metricTrigger.decreaseThreshold": {
-      "value": 20
     }
   }
 }

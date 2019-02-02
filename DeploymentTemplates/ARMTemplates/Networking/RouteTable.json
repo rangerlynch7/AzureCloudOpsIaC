@@ -7,15 +7,18 @@
             "metadata": {
                 "description": "The next hop IP "
             }
-        }
-    },
-    "variables": {
-        "azfwRouteTableName": "AzfwRouteTable"
+        },
+        "azfwRouteTableName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Route table for external firewall connectivity."
+			}
+		}
     },
     "resources": [
         {
             "type": "Microsoft.Network/routeTables",
-            "name": "[variables('azfwRouteTableName')]",
+            "name": "[parameters('azfwRouteTableName')]",
             "apiVersion": "2018-02-01",
             "location": "[resourceGroup().location]",
             "properties": {

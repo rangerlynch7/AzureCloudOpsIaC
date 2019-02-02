@@ -1,40 +1,32 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "vnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Virtual Network"
-            }
-        },
-        "vnetAddressPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP Address pool for the virtual network in CIDR format."
-            }
-        },
-        "vnetAddressPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP Address pool for the virtual network in CIDR format."
-            }
-        }
-    },
-    "resources": [
-        {
-            "type": "Microsoft.Network/virtualNetworks",
-            "name": "[parameters('vnetName')]",
-            "apiVersion": "2016-03-30",
-            "location": "[resourceGroup().location]",
-            "tags": {},
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('vnetAddressPrefix')]"
-                    ]
-                }
-            },
-        }
-    ]
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"vnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Virtual Network"
+			}
+		},
+		"vnetAddressPrefix": {
+			"type": "string",
+			"metadata": {
+				"description": "The IP Address pool for the virtual network in CIDR format."
+			}
+		}
+	},
+	"resources": [{
+		"type": "Microsoft.Network/virtualNetworks",
+		"name": "[parameters('vnetName')]",
+		"apiVersion": "2016-03-30",
+		"location": "[resourceGroup().location]",
+		"tags": {},
+		"properties": {
+			"addressSpace": {
+				"addressPrefixes": [
+					"[parameters('vnetAddressPrefix')]"
+				]
+			}
+		}
+	}]
 }

@@ -1,36 +1,41 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "publicIPAddressName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Public IP Address"
-            }
-        },
-        "publicIPAllocationMethod": {
-            "type": "string",
-            "allowedValues": [
-                "Static",
-                "Dynamic"
-            ],
-            "metadata": {
-                "description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
-            }
-        }
-    },
-    "resources": [
-        {
-            "apiVersion": "2017-06-01",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[parameters('publicIPAddressName')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
-                "dnsSettings": {
-                    "domainNameLabel": "[toLower(parameters('vmssName'))]"
-                }
-            }
-        }
-    ],
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"publicIPAddressName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Public IP Address"
+			}
+		},
+		"publicIPAllocationMethod": {
+			"type": "string",
+			"defaultValue":"Dynamic",
+			"allowedValues": [
+				"Static",
+				"Dynamic"
+			],
+			"metadata": {
+				"description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
+			}
+		},
+		"vmssName": {
+			"type": "string",
+			"metadata": {
+				"description": "vmss Name for the public ip to use as a domain label"
+			}
+		}
+	},
+	"resources": [{
+		"apiVersion": "2017-06-01",
+		"type": "Microsoft.Network/publicIPAddresses",
+		"name": "[parameters('publicIPAddressName')]",
+		"location": "[resourceGroup().location]",
+		"properties": {
+			"publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
+			"dnsSettings": {
+				"domainNameLabel": "[toLower(parameters('vmssName'))]"
+			}
+		}
+	}]
 }
