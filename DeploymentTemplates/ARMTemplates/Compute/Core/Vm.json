@@ -79,7 +79,9 @@
 			}
 		}
 	},
-	"variables": {},
+	"variables": {
+        "nicname":"test123"
+    },
 	"resources": [{
 		"type": "Microsoft.Compute/virtualMachines",
 		"name": "[parameters('vmName')]",
@@ -108,21 +110,11 @@
 				}
 			},
 			"networkProfile": {
-				"networkInterfaceConfigurations": [{
-					"name": "nic",
-					"properties": {
-						"primary": true,
-						"ipConfigurations": [{
-							"privateIPAllocationMethod": "Dynamic",
-							"name": "ipconfig",
-							"properties": {
-								"subnet": {
-									"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-								}
-							}
-						}]
-					}
-				}]
+				"networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                    }
+                  ]
 			}
 		}
 	}]
