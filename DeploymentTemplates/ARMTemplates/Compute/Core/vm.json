@@ -1,0 +1,137 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"vmSku": {
+			"type": "string",
+			"allowedValues": [
+				"Standard_D14",
+				"Standard_D1_v2",
+				"Standard_D2_v2",
+				"Standard_D3_v2",
+				"Standard_D4_v2",
+				"Standard_D5_v2",
+				"Standard_D11_v2",
+				"Standard_D12_v2",
+				"Standard_D13_v2",
+				"Standard_D14_v2",
+				"Standard_M8-2ms"
+			],
+			"defaultValue": "Standard_A1",
+			"metadata": {
+				"description": "App VM size to provision. See https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs"
+			}
+		},
+		"vmName": {
+			"type": "string",
+			"metadata": {
+				"description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
+			},
+			"maxLength": 61
+		},
+		"adminUsername": {
+			"type": "string",
+			"metadata": {
+				"description": "Admin username on all VMs."
+			}
+		},
+		"adminPassword": {
+			"type": "securestring",
+			"metadata": {
+				"description": "Admin password on all VMs."
+			}
+		},
+		"imageReference.publisher": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the image publisher"
+			}
+		},
+		"imageReference.offer": {
+			"type": "string",
+			"metadata": {
+				"description": "Version of the image"
+			}
+		},
+		"imageReference.sku": {
+			"type": "string",
+			"metadata": {
+				"description": "Sku of the image specified"
+			}
+		},
+		"imageReference.version": {
+			"type": "string",
+			"defaultValue": "latest",
+			"metadata": {
+				"description": "Version of the image"
+			}
+		},
+		"vnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Load Balancer"
+			}
+		},
+		"subnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Load Balancer"
+			}
+		}
+	},
+	"variables":{
+	
+	},
+	"resources": [
+		{
+			"type": "Microsoft.Compute/virtualMachines",
+			"name": "[parameters('vmName')]",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2017-03-30",
+			"properties": {
+                "hardwareProfile": { 
+                    "vmSize": "[parameters('vmSku')]"
+                },
+				"osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                  },
+                  "storageProfile": {
+                    "imageReference": {
+                      "publisher": "[parameters('imageReference.publisher')]",
+                      "offer": "[parameters('imageReference.offer')]",
+                      "sku": "[parameters('imageReference.sku')]",
+                      "version": "[parameters('imageReference.version')]",
+                    },
+                    "osDisk": {
+                      "name": "[concat(parameters('vmName'),'-osdisk')]",
+                      "caching": "ReadWrite",
+                      "createOption": "FromImage"
+                    },
+					"networkProfile": {
+						"networkInterfaceConfigurations": [
+							{
+								"name": "nic",
+								"properties": {
+									"primary": true,
+									"ipConfigurations": [
+										{
+                                            "privateIPAllocationMethod": "Dynamic",
+											"name": "ipconfig",
+											"properties": {
+												"subnet": {
+													"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+												},
+											}
+										}
+									]
+								}
+							}
+						]
+					}
+				}
+			}
+		}
+	]
+}

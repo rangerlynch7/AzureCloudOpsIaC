@@ -304,208 +304,18 @@
 		"vmssTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vmss.json')]",
 		"nicTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]",
 		"autoscaleTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'AutoScale.json')]",
-		"logAnalyticsExtensionforLinux": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionForLinux.json')]"
+		"logAnalyticsExtensionforLinuxTemplateUrl": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionForLinux.json')]",
+		"virtualMachineTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vm.json')]"
 	},
 	"resources": [
 		{
 			"apiVersion": "2017-05-10",
-			"name": "VnetDeployment",
+			"name": "VmDeployment",
 			"type": "Microsoft.Resources/deployments",
 			"properties": {
 				"mode": "Incremental",
 				"templateLink": {
-					"uri": "[variables('virtualNetworkTemplateUrl')]"
-				},
-				"parameters": {
-					"vnetName": {
-						"value": "[parameters('vnetName')]"
-					},
-					"vnetAddressPrefix": {
-						"value": "[parameters('vnetAddressPrefix')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "NsgDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('nsgTemplateUrl')]"
-				},
-				"parameters": {
-					"nsgName": {
-						"value": "[parameters('nsgName')]"
-					},
-					"securityRules.Name": {
-						"value": "[parameters('securityRules.Name')]"
-					},
-					"securityRules.properties.protocol": {
-						"value": "[parameters('securityRules.properties.protocol')]"
-					},
-					"securityRules.properties.sourcePortRange": {
-						"value": "[parameters('securityRules.properties.sourcePortRange')]"
-					},
-					"securityRules.properties.destinationPortRange": {
-						"value": "[parameters('securityRules.properties.destinationPortRange')]"
-					},
-					"securityRules.properties.sourceAddressPrefix": {
-						"value": "[parameters('securityRules.properties.sourceAddressPrefix')]"
-					},
-					"securityRules.properties.destinationAddressPrefix": {
-						"value": "[parameters('securityRules.properties.destinationAddressPrefix')]"
-					},
-					"securityRules.properties.access": {
-						"value": "[parameters('securityRules.properties.access')]"
-					},
-					"securityRules.properties.priority": {
-						"value": "[parameters('securityRules.properties.priority')]"
-					},
-					"securityRules.properties.direction": {
-						"value": "[parameters('securityRules.properties.direction')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "RouteTableDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('routeTableTemplateUrl')]"
-				},
-				"parameters": {
-					"nextHopIP": {
-						"value": "[parameters('nextHopIP')]"
-					},
-					"azfwRouteTableName": {
-						"value": "[parameters('azfwRouteTableName')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "SubnetDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('subnetTemplateUrl')]"
-				},
-				"parameters": {
-					"vnetName": {
-						"value": "[parameters('vnetName')]"
-					},
-					"vnetAddressPrefix": {
-						"value": "[parameters('vnetAddressPrefix')]"
-					},
-					"subnetName": {
-						"value": "[parameters('subnetName')]"
-					},
-					"subnetPrefix": {
-						"value": "[parameters('subnetPrefix')]"
-					},
-					"nsgName": {
-						"value": "[parameters('nsgName')]"
-					},
-					"azfwRouteTableName": {
-						"value": "[parameters('azfwRouteTableName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"VnetDeployment",
-				"NsgDeployment",
-				"RouteTableDeployment"
-			]
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "FirewallSubnetDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('firewallSubnetTemplateUrl')]"
-				},
-				"parameters": {
-					"vnetName": {
-						"value": "[parameters('vnetName')]"
-					},
-					"vnetAddressPrefix": {
-						"value": "[parameters('vnetAddressPrefix')]"
-					},
-					"subnetName": {
-						"value": "[parameters('firewallSubnetName')]"
-					},
-					"subnetPrefix": {
-						"value": "[parameters('azureFirewallSubnetPrefix')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"VnetDeployment"
-			]
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "azFirewallDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('azFirewallTemplateUrl')]"
-				},
-				"parameters": {
-					"vnetName": {
-						"value": "[parameters('vnetName')]"
-					},
-					"firewallSubnetName": {
-						"value": "[parameters('firewallSubnetName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"VnetDeployment",
-				"SubnetDeployment",
-				"FirewallSubnetDeployment"
-			]
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "LbDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('lbTemplateUrl')]"
-				},
-				"parameters": {
-					"lbName": {
-						"value": "[parameters('lbName')]"
-					},
-					"publicIPAllocationMethod": {
-						"value": "[parameters('publicIPAllocationMethod')]"
-					},
-					"vmssName": {
-						"value": "[parameters('vmssName')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "VmssDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('vmssTemplateUrl')]"
+					"uri": "[variables('virtualMachineTemplateUrl')]"
 				},
 				"parameters": {
 					"vnetName": {
@@ -517,11 +327,8 @@
 					"vmSku": {
 						"value": "[parameters('vmSku')]"
 					},
-					"vmssName": {
-						"value": "[parameters('vmssName')]"
-					},
-					"instanceCount": {
-						"value": "[parameters('instanceCount')]"
+					"vmName": {
+						"value": "[parameters('vmName')]"
 					},
 					"adminUsername": {
 						"value": "[parameters('adminUsername')]"
@@ -540,76 +347,9 @@
 					},
 					"imageReference.version": {
 						"value": "[parameters('imageReference.version')]"
-					},
-					"lbName": {
-						"value": "[parameters('lbName')]"
 					}
 				}
-			},
-			"dependsOn": [
-				"VnetDeployment",
-				"SubnetDeployment",
-				"LbDeployment"
-			]
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "AutoscaleDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('autoscaleTemplateUrl')]"
-				},
-				"parameters": {
-					"vmssName": {
-						"value": "[parameters('vmssName')]"
-					},
-					"capacity.minimum": {
-						"value": "[parameters('capacity.minimum')]"
-					},
-					"capacity.maximum": {
-						"value": "[parameters('capacity.maximum')]"
-					},
-					"capacity.default": {
-						"value": "[parameters('capacity.default')]"
-					},
-					"metricTrigger.increaseThreshold": {
-						"value": "[parameters('metricTrigger.increaseThreshold')]"
-					},
-					"metricTrigger.decreaseThreshold": {
-						"value": "[parameters('metricTrigger.decreaseThreshold')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"VmssDeployment"
-			]
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "LogAnalyticsExtensionDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('logAnalyticsExtensionforLinux')]"
-				},
-				"parameters": {
-					"vmssName": {
-						"value": "[parameters('vmssName')]"
-					},
-					"workspaceId": {
-						"value": "[parameters('workspaceId')]"
-					},
-					"workspaceKey": {
-						"value": "[parameters('workspaceKey')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"VmssDeployment"
-			]
+			}
 		}
 	]
 }

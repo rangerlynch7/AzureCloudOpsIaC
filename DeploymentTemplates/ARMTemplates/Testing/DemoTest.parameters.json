@@ -116,6 +116,9 @@
           },
           "secretName": "omskey"
       }
+    },
+    "vmName": {
+      "value": "demovm"
     }
   }
 }
