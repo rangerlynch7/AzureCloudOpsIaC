@@ -94,7 +94,8 @@
 		}
 	},
 	"variables":{
-		"loadBalancerBackEndName": "[concat(parameters('lbName'),'loadBalancerBackEnd')]"
+		"loadBalancerBackEndName": "[concat(parameters('lbName'),'loadBalancerBackEnd')]",
+		"loadBalancerNatPoolName": "[concat(parameters('lbName'),'loadBalancerNatPool')]"
 	},
 	"resources": [
 		{
@@ -146,7 +147,12 @@
 													{
 														"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('lbName'), '/backendAddressPools/', variables('loadBalancerBackEndName'))]"
 													}
-												]
+												],
+												"loadBalancerInboundNatPools": [
+													{
+													  "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('lbName'), '/inboundNatPools/', variables('loadBalancerNatPoolName'))]"
+													}
+												  ]
 											}
 										}
 									]
