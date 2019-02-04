@@ -79,59 +79,53 @@
 			}
 		}
 	},
-	"variables":{
-	
+	"variables": {
+
 	},
-	"resources": [
-		{
-			"type": "Microsoft.Compute/virtualMachines",
-			"name": "[parameters('vmName')]",
-			"location": "[resourceGroup().location]",
-			"apiVersion": "2017-03-30",
-			"properties": {
-                "hardwareProfile": { 
-                    "vmSize": "[parameters('vmSku')]"
-                },
-				"osProfile": {
-                    "computerName": "[parameters('vmName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                  },
-                  "storageProfile": {
-                    "imageReference": {
-                      "publisher": "[parameters('imageReference.publisher')]",
-                      "offer": "[parameters('imageReference.offer')]",
-                      "sku": "[parameters('imageReference.sku')]",
-                      "version": "[parameters('imageReference.version')]",
-                    },
-                    "osDisk": {
-                      "name": "[concat(parameters('vmName'),'-osdisk')]",
-                      "caching": "ReadWrite",
-                      "createOption": "FromImage"
-                    },
-					"networkProfile": {
-						"networkInterfaceConfigurations": [
-							{
-								"name": "nic",
+	"resources": [{
+		"type": "Microsoft.Compute/virtualMachines",
+		"name": "[parameters('vmName')]",
+		"location": "[resourceGroup().location]",
+		"apiVersion": "2017-03-30",
+		"properties": {
+			"hardwareProfile": {
+				"vmSize": "[parameters('vmSku')]"
+			},
+			"osProfile": {
+				"computerName": "[parameters('vmName')]",
+				"adminUsername": "[parameters('adminUsername')]",
+				"adminPassword": "[parameters('adminPassword')]"
+			},
+			"storageProfile": {
+				"imageReference": {
+					"publisher": "[parameters('imageReference.publisher')]",
+					"offer": "[parameters('imageReference.offer')]",
+					"sku": "[parameters('imageReference.sku')]",
+					"version": "[parameters('imageReference.version')]"
+				},
+				"osDisk": {
+					"name": "[concat(parameters('vmName'),'-osdisk')]",
+					"caching": "ReadWrite",
+					"createOption": "FromImage"
+				},
+				"networkProfile": {
+					"networkInterfaceConfigurations": [{
+						"name": "nic",
+						"properties": {
+							"primary": true,
+							"ipConfigurations": [{
+								"privateIPAllocationMethod": "Dynamic",
+								"name": "ipconfig",
 								"properties": {
-									"primary": true,
-									"ipConfigurations": [
-										{
-                                            "privateIPAllocationMethod": "Dynamic",
-											"name": "ipconfig",
-											"properties": {
-												"subnet": {
-													"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-												},
-											}
-										}
-									]
+									"subnet": {
+										"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+									}
 								}
-							}
-						]
-					}
+							}]
+						}
+					}]
 				}
 			}
 		}
-	]
+	}]
 }
