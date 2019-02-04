@@ -309,6 +309,175 @@
 	"resources": [
 		{
 			"apiVersion": "2017-05-10",
+			"name": "VnetDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('virtualNetworkTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"vnetAddressPrefix": {
+						"value": "[parameters('vnetAddressPrefix')]"
+					}
+				}
+			}
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "NsgDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('nsgTemplateUrl')]"
+				},
+				"parameters": {
+					"nsgName": {
+						"value": "[parameters('nsgName')]"
+					},
+					"securityRules.Name": {
+						"value": "[parameters('securityRules.Name')]"
+					},
+					"securityRules.properties.protocol": {
+						"value": "[parameters('securityRules.properties.protocol')]"
+					},
+					"securityRules.properties.sourcePortRange": {
+						"value": "[parameters('securityRules.properties.sourcePortRange')]"
+					},
+					"securityRules.properties.destinationPortRange": {
+						"value": "[parameters('securityRules.properties.destinationPortRange')]"
+					},
+					"securityRules.properties.sourceAddressPrefix": {
+						"value": "[parameters('securityRules.properties.sourceAddressPrefix')]"
+					},
+					"securityRules.properties.destinationAddressPrefix": {
+						"value": "[parameters('securityRules.properties.destinationAddressPrefix')]"
+					},
+					"securityRules.properties.access": {
+						"value": "[parameters('securityRules.properties.access')]"
+					},
+					"securityRules.properties.priority": {
+						"value": "[parameters('securityRules.properties.priority')]"
+					},
+					"securityRules.properties.direction": {
+						"value": "[parameters('securityRules.properties.direction')]"
+					}
+				}
+			}
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "RouteTableDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('routeTableTemplateUrl')]"
+				},
+				"parameters": {
+					"nextHopIP": {
+						"value": "[parameters('nextHopIP')]"
+					},
+					"azfwRouteTableName": {
+						"value": "[parameters('azfwRouteTableName')]"
+					}
+				}
+			}
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "SubnetDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('subnetTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"vnetAddressPrefix": {
+						"value": "[parameters('vnetAddressPrefix')]"
+					},
+					"subnetName": {
+						"value": "[parameters('subnetName')]"
+					},
+					"subnetPrefix": {
+						"value": "[parameters('subnetPrefix')]"
+					},
+					"nsgName": {
+						"value": "[parameters('nsgName')]"
+					},
+					"azfwRouteTableName": {
+						"value": "[parameters('azfwRouteTableName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VnetDeployment",
+				"NsgDeployment",
+				"RouteTableDeployment"
+			]
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "FirewallSubnetDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('firewallSubnetTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"vnetAddressPrefix": {
+						"value": "[parameters('vnetAddressPrefix')]"
+					},
+					"subnetName": {
+						"value": "[parameters('firewallSubnetName')]"
+					},
+					"subnetPrefix": {
+						"value": "[parameters('azureFirewallSubnetPrefix')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VnetDeployment"
+			]
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "azFirewallDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('azFirewallTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"firewallSubnetName": {
+						"value": "[parameters('firewallSubnetName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VnetDeployment",
+				"SubnetDeployment",
+				"FirewallSubnetDeployment"
+			]
+		},
+		{
+			"apiVersion": "2017-05-10",
 			"name": "LbDeployment",
 			"type": "Microsoft.Resources/deployments",
 			"properties": {
@@ -378,6 +547,8 @@
 				}
 			},
 			"dependsOn": [
+				"VnetDeployment",
+				"SubnetDeployment",
 				"LbDeployment"
 			]
 		},
