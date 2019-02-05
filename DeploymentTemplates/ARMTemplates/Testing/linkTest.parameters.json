@@ -62,9 +62,6 @@
     "vmssName": {
       "value": "demovmss1"
     },
-    "lbName": {
-      "value": "demovmss1-lb"
-    },
     "vmSku": {
       "value": "Standard_D2_v2"
     },
