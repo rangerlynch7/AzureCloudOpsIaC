@@ -560,6 +560,49 @@
 				"AppGatewayNsgDeployment",
 				"SubnetDeployment"
 			]
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "ApplicationGatewayDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('appGatewayTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"subnetName": {
+						"value": "[parameters('appGatewaySubnetName')]"
+					},
+					"applicationGatewayName": {
+						"value": "[parameters('applicationGatewayName')]"
+					},
+					"applicationGatewaySize": {
+						"value": "[parameters('applicationGatewaySize')]"
+					},
+					"applicationGatewayInstanceCount": {
+						"value": "[parameters('applicationGatewayInstanceCount')]"
+					},
+					"appGatewayFrontendPort": {
+						"value": "[parameters('appGatewayFrontendPort')]"
+					},
+					"appGatewayBackendPort": {
+						"value": "[parameters('appGatewayBackendPort')]"
+					},
+					"appGatewayBackendIPAddresses": {
+						"value": "[parameters('appGatewayBackendIPAddresses')]"
+					},
+					"appGatewayCookieBasedAffinity": {
+						"value": "[parameters('appGatewayCookieBasedAffinity')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VnetDeployment"
+			]
 		}
 	]
 }
