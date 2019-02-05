@@ -80,7 +80,7 @@
 		}
 	},
 	"variables": {
-        "nicname":"test123"
+        "nicname":"[concat(parameters('vmName'),'-nic')]",
     },
 	"resources": [{
 		"type": "Microsoft.Compute/virtualMachines",
