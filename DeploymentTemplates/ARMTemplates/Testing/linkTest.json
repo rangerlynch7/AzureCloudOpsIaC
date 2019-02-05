@@ -310,10 +310,16 @@
 		},
 		"applicationGatewaySize": {
 			"type": "string",
+			"allowedValues": [
+			  "Standard_Small",
+			  "Standard_Medium",
+			  "Standard_Large"
+			],
+			"defaultValue": "Standard_Small",
 			"metadata": {
-				"description": "Application Gateway Size"
+			  "description": "application gateway size"
 			}
-		},
+		  },
 		"applicationGatewayInstanceCount": {
 			"type": "int",
 			"allowedValues": [
