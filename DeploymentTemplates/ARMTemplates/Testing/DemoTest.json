@@ -297,9 +297,9 @@
 	},
 	"variables": {
 		"templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/ForkAzureCloudOpsIaC/ARMTemplates/computeNischith/DeploymentTemplates/ARMTemplates/",
-		"computeCoreTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
-		"computeExtensionsTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
-		"networkingTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Networking/')]",
+		"computeCoreTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
+		"computeExtensionsTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
+		"networkingTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Networking/')]",
 		"virtualNetworkTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'VirtualNetwork.json')]",
 		"nsgTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkSecurityGroup.json')]",
 		"routeTableTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'RouteTable.json')]",
@@ -312,7 +312,8 @@
 		"nicTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]",
 		"autoscaleTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'AutoScale.json')]",
 		"logAnalyticsExtensionforLinuxTemplateUrl": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionForLinux.json')]",
-		"virtualMachineTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vm.json')]"
+		"virtualMachineTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vm.json')]",
+		"networkInterfaceTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]"
 	},
 	"resources": [
 		{
@@ -354,6 +355,31 @@
 					},
 					"imageReference.version": {
 						"value": "[parameters('imageReference.version')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"NicDeployment"
+			]
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "NicDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('networkInterfaceTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"subnetName": {
+						"value": "[parameters('subnetName')]"
+					},
+					"vmName": {
+						"value": "[parameters('vmName')]"
 					}
 				}
 			}

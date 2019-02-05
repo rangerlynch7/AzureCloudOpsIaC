@@ -14,57 +14,35 @@
 				"description": "Name of the Subnet"
 			}
 		},
-		"vmssName": {
+		"vmName": {
 			"type": "string",
 			"metadata": {
 				"description": "Name of VM Scale Set"
 			}
-		},
-		"lbName": {
-			"type": "string",
-			"metadata": {
-				"description": "Name of the Load Balancer"
-			}
 		}
 	},
 	"variables": {
-		"nicNamePrefix": "[concat(parameters('vmssName'),'-nic')]",
-		"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters ('subnetName'))]",
-		"lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
-		"loadBalancerBackEndName": "loadBalancerBackEnd",
-		"loadBalancerNatPoolName": "loadBalancerNatPool"
+		"nicNamePrefix": "[concat(parameters('vmName'),'-nic')]",
+		"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters ('subnetName'))]"
 	},
 	"resources": [
 		{
-			"apiVersion": "2015-05-01-preview",
+			"apiVersion": "2015-06-15",
 			"type": "Microsoft.Network/networkInterfaces",
-			"name": "[concat(parameters('vmssName'),'/',parameters('nicNamePrefix'))]",
+			"name": "[variables('nicNamePrefix')]",
 			"location": "[resourceGroup().location]",
-			"dependsOn": [
-				"[parameters('lbName')]"
-			],
 			"properties": {
-				"primary": true,
 				"ipConfigurations": [
 					{
-						"name": "ipconfig",
-						"properties": {
-							"subnet": {
-								"id": "[resourceId(parameters('vnetName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-							},
-							"loadBalancerBackendAddressPools": [
-								{
-									"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('lbName'), '/backendAddressPools/', variables('loadBalancerBackEndName'))]"
-								}
-							],
-							"loadBalancerInboundNatPools": [
-								{
-									"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('lbName'), '/inboundNatPools/', variables('loadBalancerNatPoolName'))]"
-								}
-							]
+					  "name": "ipconfig1",
+					  "properties": {
+						"privateIPAllocationMethod": "Dynamic",
+						"subnet": {
+						  "id": "[variables('subnetRef')]"
 						}
+					  }
 					}
-				]
+				  ]
 			}
 		}
 	]
