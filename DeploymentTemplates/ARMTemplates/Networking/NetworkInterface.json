@@ -19,11 +19,18 @@
 			"metadata": {
 				"description": "Name of VM Scale Set"
 			}
+		},
+		"nsgName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of Network Security Group"
+			}
 		}
 	},
 	"variables": {
 		"nicNamePrefix": "[concat(parameters('vmName'),'-nic')]",
-		"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters ('subnetName'))]"
+		"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters ('subnetName'))]",
+		"nsgref":"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
 	},
 	"resources": [
 		{
@@ -32,6 +39,9 @@
 			"name": "[variables('nicNamePrefix')]",
 			"location": "[resourceGroup().location]",
 			"properties": {
+				"networkSecurityGroup": {
+					"id":"[variables('nsgref')]"
+				  },
 				"ipConfigurations": [
 					{
 					  "name": "ipconfig1",
