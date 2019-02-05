@@ -53,12 +53,14 @@
     },
     "appGatewayFrontendPort": {
       "type": "int",
+      "defaultValue":80,
       "metadata": {
         "description": "application gateway front end port"
       }
     },
     "appGatewayBackendPort": {
       "type": "int",
+      "defaultValue":80,
       "metadata": {
         "description": "application gateway back end port"
       }
