@@ -106,6 +106,9 @@
     "metricTrigger.decreaseThreshold": {
       "value": 20
     },
+    "applicationGatewayName": {
+      "value": "demoappgateway"
+    },
     "workspaceKey": {
       "reference": {
           "keyVault": {
