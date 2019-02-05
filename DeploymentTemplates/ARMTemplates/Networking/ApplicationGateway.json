@@ -8,22 +8,10 @@
         "description": "virtual network name"
       }
     },
-    "vnetAddressPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "virtual network address range"
-      }
-    },
     "subnetName": {
       "type": "string",
       "metadata": {
         "description": "Subnet Name"
-      }
-    },
-    "subnetPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Subnet prefix"
       }
     },
     "applicationGatewayName": {
@@ -63,19 +51,19 @@
         "description": "application gateway instance count"
       }
     },
-    "frontendPort": {
+    "appGatewayFrontendPort": {
       "type": "int",
       "metadata": {
         "description": "application gateway front end port"
       }
     },
-    "backendPort": {
+    "appGatewayBackendPort": {
       "type": "int",
       "metadata": {
         "description": "application gateway back end port"
       }
     },
-    "backendIPAddresses": {
+    "appGatewayBackendIPAddresses": {
       "type": "array",
       "defaultValue": [
         {
@@ -89,7 +77,7 @@
         "description": "back end pool ip addresses"
       }
     },
-    "cookieBasedAffinity": {
+    "appGatewayCookieBasedAffinity": {
       "type": "string",
       "allowedValues": [
         "Enabled",
@@ -106,34 +94,10 @@
   },
   "resources": [
     {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('vnetName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('vnetAddressPrefix')]"
-          ]
-        },
-        "subnets": [
-          {
-            "name": "[parameters('subnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnetPrefix')]"
-            }
-          }
-        ]
-      }
-    },
-    {
       "apiVersion": "2017-06-01",
       "name": "[parameters('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]"
-      ],
       "properties": {
         "sku": {
           "name": "[parameters('applicationGatewaySize')]",
@@ -164,7 +128,7 @@
           {
             "name": "appGatewayFrontendPort",
             "properties": {
-              "Port": "[parameters('frontendPort')]"
+              "Port": "[parameters('appGatewayFrontendPort')]"
             }
           }
         ],
@@ -172,7 +136,7 @@
           {
             "name": "appGatewayBackendPool",
             "properties": {
-              "BackendAddresses": "[parameters('backendIPAddresses')]"
+              "BackendAddresses": "[parameters('appGatewayBackendIPAddresses')]"
             }
           }
         ],
@@ -180,9 +144,9 @@
           {
             "name": "appGatewayBackendHttpSettings",
             "properties": {
-              "Port": "[parameters('backendPort')]",
+              "Port": "[parameters('appGatewayBackendPort')]",
               "Protocol": "Http",
-              "CookieBasedAffinity": "[parameters('cookieBasedAffinity')]"
+              "CookieBasedAffinity": "[parameters('appGatewayCookieBasedAffinity')]"
             }
           }
         ],
