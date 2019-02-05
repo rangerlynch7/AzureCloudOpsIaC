@@ -20,13 +20,6 @@
 				"description": "Name of the Network Security Group."
 			}
 		},
-		"appGatewayNsgName": {
-			"type": "string",
-			"defaultValue":"AppGatewayNsg",
-			"metadata": {
-				"description": "Name of the Network Security Group."
-			}
-		},
 		"securityRules.Name": {
 			"type": "string",
 			"metadata": {
@@ -105,24 +98,10 @@
 				"description": "Name of the Subnet"
 			}
 		},
-		"appGatewaySubnetName": {
-			"type": "string",
-			"defaultValue":"AppGatewaySubnet",
-			"metadata": {
-				"description": "Name of the Subnet"
-			}
-		},
 		"subnetPrefix": {
 			"type": "string",
 			"metadata": {
 				"description": "The IP Address pool for the Subnet in CIDR format."
-			}
-		},
-		"appGatewaySubnetPrefix": {
-			"type": "string",
-			"defaultValue":"10.200.0.0/24",
-			"metadata": {
-				"description": "The IP Address pool for the Application Gateway Subnet in CIDR format."
 			}
 		},
 		"azfwRouteTableName": {
@@ -186,6 +165,12 @@
 			],
 			"metadata": {
 				"description": "Allocation method of the Public IP Address, must be either Static or Dynamic Allocation"
+			}
+		},
+		"lbName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Load Balancer"
 			}
 		},
 		"vmssName": {
@@ -302,255 +287,105 @@
 				"description": "Workspace key of the OMS workspace, will be referenced from keyvault"
 			}
 		},
-		"applicationGatewayName": {
+		"vmName": {
 			"type": "string",
 			"metadata": {
-				"description": "Name of the Application Gateway Service"
-			}
-		},
-		"applicationGatewaySize": {
-			"type": "string",
-			"metadata": {
-				"description": "Application Gateway Size"
-			}
-		},
-		"applicationGatewayInstanceCount": {
-			"type": "int",
-			"allowedValues": [
-			  1,
-			  2,
-			  3,
-			  4,
-			  5,
-			  6,
-			  7,
-			  8,
-			  9,
-			  10
-			],
-			"defaultValue": 2,
-			"metadata": {
-			  "description": "application gateway instance count"
-			}
-		  },
-		  "appGatewayFrontendPort": {
-			"type": "int",
-			"metadata": {
-			  "description": "application gateway front end port"
-			}
-		  },
-		  "appGatewaybackendPort": {
-			"type": "int",
-			"metadata": {
-			  "description": "application gateway back end port"
-			}
-		  },
-		  "appGatewaybackendIPAddresses": {
-			"type": "array",
-			"defaultValue": [
-			  {
-				"IpAddress": "10.0.0.4"
-			  },
-			  {
-				"IpAddress": "10.0.0.5"
-			  }
-			],
-			"metadata": {
-			  "description": "back end pool ip addresses"
-			}
-		  },
-		  "appGatewayCookieBasedAffinity": {
-			"type": "string",
-			"allowedValues": [
-			  "Enabled",
-			  "Disabled"
-			],
-			"defaultValue": "Disabled",
-			"metadata": {
-			  "description": "cookie based affinity"
-			}
-		  }
+				"description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
+			},
+			"maxLength": 61
+		}
 	},
 	"variables": {
 		"templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/ForkAzureCloudOpsIaC/ARMTemplates/computeNischith/DeploymentTemplates/ARMTemplates/",
-		"computeCoreTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
-		"computeExtensionsTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
-		"networkingTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Networking/')]",
+		"computeCoreTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
+		"computeExtensionsTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
+		"networkingTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Networking/')]",
 		"virtualNetworkTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'VirtualNetwork.json')]",
 		"nsgTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkSecurityGroup.json')]",
+		"routeTableTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'RouteTable.json')]",
 		"subnetTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'Subnet.json')]",
+		"firewallSubnetTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'FirewallSubnet.json')]",
+		"azFirewallTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'AzureFirewall.json')]",
+		"publicIPTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'PublicIP.json')]",
+		"lbTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'LoadBalancer.json')]",
 		"vmssTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vmss.json')]",
-		"appGatewayTemplateUrl":"[concat(variables('networkingTemplateBaseUrl'), 'ApplicationGateway.json')]"
+		"nicTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]",
+		"autoscaleTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'AutoScale.json')]",
+		"logAnalyticsExtensionforLinuxTemplateUrl": "[concat(variables('computeExtensionsTemplateBaseUrl'), 'LogAnalyticsExtensionForLinux.json')]",
+		"virtualMachineTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vm.json')]",
+		"networkInterfaceTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkInterface.json')]"
 	},
 	"resources": [
 		{
 			"apiVersion": "2017-05-10",
-			"name": "VnetDeployment",
+			"name": "VmDeployment",
 			"type": "Microsoft.Resources/deployments",
 			"properties": {
 				"mode": "Incremental",
 				"templateLink": {
-					"uri": "[variables('virtualNetworkTemplateUrl')]"
+					"uri": "[variables('virtualMachineTemplateUrl')]"
 				},
 				"parameters": {
 					"vnetName": {
 						"value": "[parameters('vnetName')]"
-					},
-					"vnetAddressPrefix": {
-						"value": "[parameters('vnetAddressPrefix')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "NsgDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('nsgTemplateUrl')]"
-				},
-				"parameters": {
-					"nsgName": {
-						"value": "[parameters('nsgName')]"
-					},
-					"securityRules.Name": {
-						"value": "[parameters('securityRules.Name')]"
-					},
-					"securityRules.properties.protocol": {
-						"value": "[parameters('securityRules.properties.protocol')]"
-					},
-					"securityRules.properties.sourcePortRange": {
-						"value": "[parameters('securityRules.properties.sourcePortRange')]"
-					},
-					"securityRules.properties.destinationPortRange": {
-						"value": "[parameters('securityRules.properties.destinationPortRange')]"
-					},
-					"securityRules.properties.sourceAddressPrefix": {
-						"value": "[parameters('securityRules.properties.sourceAddressPrefix')]"
-					},
-					"securityRules.properties.destinationAddressPrefix": {
-						"value": "[parameters('securityRules.properties.destinationAddressPrefix')]"
-					},
-					"securityRules.properties.access": {
-						"value": "[parameters('securityRules.properties.access')]"
-					},
-					"securityRules.properties.priority": {
-						"value": "[parameters('securityRules.properties.priority')]"
-					},
-					"securityRules.properties.direction": {
-						"value": "[parameters('securityRules.properties.direction')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "SubnetDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('subnetTemplateUrl')]"
-				},
-				"parameters": {
-					"vnetName": {
-						"value": "[parameters('vnetName')]"
-					},
-					"vnetAddressPrefix": {
-						"value": "[parameters('vnetAddressPrefix')]"
 					},
 					"subnetName": {
 						"value": "[parameters('subnetName')]"
 					},
-					"subnetPrefix": {
-						"value": "[parameters('subnetPrefix')]"
+					"vmSku": {
+						"value": "[parameters('vmSku')]"
 					},
-					"nsgName": {
-						"value": "[parameters('nsgName')]"
+					"vmName": {
+						"value": "[parameters('vmName')]"
+					},
+					"adminUsername": {
+						"value": "[parameters('adminUsername')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"imageReference.publisher": {
+						"value": "[parameters('imageReference.publisher')]"
+					},
+					"imageReference.offer": {
+						"value": "[parameters('imageReference.offer')]"
+					},
+					"imageReference.sku": {
+						"value": "[parameters('imageReference.sku')]"
+					},
+					"imageReference.version": {
+						"value": "[parameters('imageReference.version')]"
 					}
 				}
 			},
 			"dependsOn": [
-				"VnetDeployment",
-				"NsgDeployment"
+				"NicDeployment"
 			]
 		},
 		{
 			"apiVersion": "2017-05-10",
-			"name": "AppGatewayNsgDeployment",
+			"name": "NicDeployment",
 			"type": "Microsoft.Resources/deployments",
 			"properties": {
 				"mode": "Incremental",
 				"templateLink": {
-					"uri": "[variables('nsgTemplateUrl')]"
-				},
-				"parameters": {
-					"nsgName": {
-						"value": "[parameters('appGatewayNsgName')]"
-					},
-					"securityRules.Name": {
-						"value": "[parameters('securityRules.Name')]"
-					},
-					"securityRules.properties.protocol": {
-						"value": "[parameters('securityRules.properties.protocol')]"
-					},
-					"securityRules.properties.sourcePortRange": {
-						"value": "[parameters('securityRules.properties.sourcePortRange')]"
-					},
-					"securityRules.properties.destinationPortRange": {
-						"value": "[parameters('securityRules.properties.destinationPortRange')]"
-					},
-					"securityRules.properties.sourceAddressPrefix": {
-						"value": "[parameters('securityRules.properties.sourceAddressPrefix')]"
-					},
-					"securityRules.properties.destinationAddressPrefix": {
-						"value": "[parameters('securityRules.properties.destinationAddressPrefix')]"
-					},
-					"securityRules.properties.access": {
-						"value": "[parameters('securityRules.properties.access')]"
-					},
-					"securityRules.properties.priority": {
-						"value": "[parameters('securityRules.properties.priority')]"
-					},
-					"securityRules.properties.direction": {
-						"value": "[parameters('securityRules.properties.direction')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2017-05-10",
-			"name": "AppGatewaySubnetDeployment",
-			"type": "Microsoft.Resources/deployments",
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "[variables('subnetTemplateUrl')]"
+					"uri": "[variables('networkInterfaceTemplateUrl')]"
 				},
 				"parameters": {
 					"vnetName": {
 						"value": "[parameters('vnetName')]"
 					},
-					"vnetAddressPrefix": {
-						"value": "[parameters('vnetAddressPrefix')]"
-					},
 					"subnetName": {
-						"value": "[parameters('appGatewaySubnetName')]"
+						"value": "[parameters('subnetName')]"
 					},
-					"subnetPrefix": {
-						"value": "[parameters('appGatewaySubnetPrefix')]"
+					"vmName": {
+						"value": "[parameters('vmName')]"
 					},
 					"nsgName": {
-						"value": "[parameters('appGatewaynsgName')]"
+						"value": "[parameters('nsgName')]"
 					}
 				}
-			},
-			"dependsOn": [
-				"VnetDeployment",
-				"AppGatewayNsgDeployment"
-			]
+			}
 		}
 	]
 }

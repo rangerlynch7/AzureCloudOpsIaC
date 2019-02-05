@@ -27,17 +27,11 @@
       }
     },
     "nsgName": {
-			"type": "string",
-			"metadata": {
-				"description": "Name of the Network Security Group."
-			}
-    },
-    "azfwRouteTableName": {
-			"type": "string",
-			"metadata": {
-				"description": "Name of the Route table for external firewall connectivity."
-			}
-		}
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Network Security Group."
+      }
+    }
   },
   "resources": [
     {
@@ -49,11 +43,8 @@
         "addressPrefix": "[parameters('subnetPrefix')]",
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
-      },
-      "routeTable": {
-				"id": "[resourceId('Microsoft.Network/routeTables', parameters('azfwRouteTableName'))]"
-			}
-    }
+        }
+      }
     }
   ]
 }
