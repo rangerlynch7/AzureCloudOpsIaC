@@ -53,14 +53,14 @@
     },
     "appGatewayFrontendPort": {
       "type": "int",
-      "defaultValue":80,
+      "defaultValue": 80,
       "metadata": {
         "description": "application gateway front end port"
       }
     },
     "appGatewayBackendPort": {
       "type": "int",
-      "defaultValue":80,
+      "defaultValue": 80,
       "metadata": {
         "description": "application gateway back end port"
       }
@@ -120,9 +120,10 @@
           {
             "name": "appGatewayFrontendIP",
             "properties": {
+              "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('subnetRef')]"
-              }
+              },
             }
           }
         ],
