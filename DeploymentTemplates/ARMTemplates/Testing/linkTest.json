@@ -22,7 +22,7 @@
 		},
 		"appGatewayNsgName": {
 			"type": "string",
-			"defaultValue":"AppGatewayNsg",
+			"defaultValue": "AppGatewayNsg",
 			"metadata": {
 				"description": "Name of the Network Security Group."
 			}
@@ -107,7 +107,7 @@
 		},
 		"appGatewaySubnetName": {
 			"type": "string",
-			"defaultValue":"AppGatewaySubnet",
+			"defaultValue": "AppGatewaySubnet",
 			"metadata": {
 				"description": "Name of the Subnet"
 			}
@@ -120,7 +120,7 @@
 		},
 		"appGatewaySubnetPrefix": {
 			"type": "string",
-			"defaultValue":"10.200.0.0/24",
+			"defaultValue": "10.200.0.0/24",
 			"metadata": {
 				"description": "The IP Address pool for the Application Gateway Subnet in CIDR format."
 			}
@@ -311,87 +311,85 @@
 		"applicationGatewaySize": {
 			"type": "string",
 			"allowedValues": [
-			  "Standard_Small",
-			  "Standard_Medium",
-			  "Standard_Large"
+				"Standard_Small",
+				"Standard_Medium",
+				"Standard_Large"
 			],
 			"defaultValue": "Standard_Small",
 			"metadata": {
-			  "description": "application gateway size"
+				"description": "application gateway size"
 			}
-		  },
+		},
 		"applicationGatewayInstanceCount": {
 			"type": "int",
 			"allowedValues": [
-			  1,
-			  2,
-			  3,
-			  4,
-			  5,
-			  6,
-			  7,
-			  8,
-			  9,
-			  10
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
 			],
 			"defaultValue": 2,
 			"metadata": {
-			  "description": "application gateway instance count"
+				"description": "application gateway instance count"
 			}
-		  },
-		  "appGatewayFrontendPort": {
+		},
+		"appGatewayFrontendPort": {
 			"type": "int",
-			"defaultValue":80,
+			"defaultValue": 80,
 			"metadata": {
-			  "description": "application gateway front end port"
+				"description": "application gateway front end port"
 			}
-		  },
-		  "appGatewaybackendPort": {
+		},
+		"appGatewaybackendPort": {
 			"type": "int",
-			"defaultValue":80,
+			"defaultValue": 80,
 			"metadata": {
-			  "description": "application gateway back end port"
+				"description": "application gateway back end port"
 			}
-		  },
-		  "appGatewaybackendIPAddresses": {
+		},
+		"appGatewaybackendIPAddresses": {
 			"type": "array",
-			"defaultValue": [
-			  {
-				"IpAddress": "10.0.0.4"
-			  },
-			  {
-				"IpAddress": "10.0.0.5"
-			  }
+			"defaultValue": [{
+					"IpAddress": "10.0.0.4"
+				},
+				{
+					"IpAddress": "10.0.0.5"
+				}
 			],
 			"metadata": {
-			  "description": "back end pool ip addresses"
+				"description": "back end pool ip addresses"
 			}
-		  },
-		  "appGatewayCookieBasedAffinity": {
+		},
+		"appGatewayCookieBasedAffinity": {
 			"type": "string",
 			"allowedValues": [
-			  "Enabled",
-			  "Disabled"
+				"Enabled",
+				"Disabled"
 			],
 			"defaultValue": "Disabled",
 			"metadata": {
-			  "description": "cookie based affinity"
+				"description": "cookie based affinity"
 			}
-		  }
+		}
 	},
 	"variables": {
 		"templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/ForkAzureCloudOpsIaC/ARMTemplates/computeNischith/DeploymentTemplates/ARMTemplates/",
-		"computeCoreTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
-		"computeExtensionsTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
-		"networkingTemplateBaseUrl":"[concat(variables('templateBaseUrl'), 'Networking/')]",
+		"computeCoreTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
+		"computeExtensionsTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
+		"networkingTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Networking/')]",
 		"virtualNetworkTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'VirtualNetwork.json')]",
 		"nsgTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'NetworkSecurityGroup.json')]",
 		"subnetTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'Subnet.json')]",
 		"vmssTemplateUrl": "[concat(variables('computeCoreTemplateBaseUrl'), 'Vmss.json')]",
-		"appGatewayTemplateUrl":"[concat(variables('networkingTemplateBaseUrl'), 'ApplicationGateway.json')]"
+		"appGatewayTemplateUrl": "[concat(variables('networkingTemplateBaseUrl'), 'ApplicationGateway.json')]"
 	},
-	"resources": [
-		{
+	"resources": [{
 			"apiVersion": "2017-05-10",
 			"name": "VnetDeployment",
 			"type": "Microsoft.Resources/deployments",
@@ -658,6 +656,6 @@
 				"SubnetDeployment",
 				"ApplicationGatewayDeployment"
 			]
-		},
+		}
 	]
 }
