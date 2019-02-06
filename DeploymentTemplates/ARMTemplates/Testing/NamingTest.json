@@ -14,13 +14,6 @@
                 "description": "The IP Address pool for the virtual network in CIDR format."
             }
         },
-        "vnetLocation": {
-            "type": "string",
-            "defaultValue": "Canada central",
-            "metadata": {
-                "description": "The location of the Vnet"
-            }
-        },
         "vnetLocationShort": {
             "type": "string",
             "defaultValue": "cac",
@@ -42,6 +35,13 @@
         "businessUnit": {
             "type": "string",
             "defaultValue": "dal",
+            "metadata": {
+                "description": "Select the environment"
+            }
+        },
+        "input_vnetName": {
+            "type": "string",
+            "defaultValue": "[concat((parameters('vnetLocationShort'),'-',parameters('environment'),'-',parameters('businessUnit'),'-vnet01')]",
             "metadata": {
                 "description": "Select the environment"
             }
@@ -67,13 +67,10 @@
                 },
                 "parameters": {
                     "vnetName": {
-                        "value": "[variables('vnetName')]"
+                        "value": "[parameters('input_vnetName')]"
                     },
                     "vnetAddressPrefix": {
                         "value": "[parameters('vnetAddressPrefix')]"
-                    },
-                    "vnetLocation": {
-                        "value": "[parameters('vnetLocation')]"
                     }
                 }
             }
