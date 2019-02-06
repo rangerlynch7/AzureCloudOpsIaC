@@ -74,28 +74,27 @@
 				"description": "Version of the image"
 			}
 		},
-		"lbName": {
-			"type": "string",
-			"metadata": {
-				"description": "Name of the Load Balancer"
-			}
-		},
 		"vnetName": {
 			"type": "string",
 			"metadata": {
-				"description": "Name of the Load Balancer"
+				"description": "Name of the Virtual Network"
 			}
 		},
 		"subnetName": {
 			"type": "string",
 			"metadata": {
-				"description": "Name of the Load Balancer"
+				"description": "Name of the Subnet"
 			}
-		}
+		},
+		"applicationGatewayName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Application Gateway"
+			}
+		},
 	},
 	"variables":{
-		"loadBalancerBackEndName": "[concat(parameters('lbName'),'loadBalancerBackEnd')]",
-		"loadBalancerNatPoolName": "[concat(parameters('lbName'),'loadBalancerNatPool')]"
+		"appGatewayBackendPool":"appGatewayBackendPool"
 	},
 	"resources": [
 		{
@@ -143,14 +142,9 @@
 												"subnet": {
 													"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
 												},
-												"loadBalancerBackendAddressPools": [
+												"ApplicationGatewayBackendAddressPools": [
 													{
-														"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('lbName'), '/backendAddressPools/', variables('loadBalancerBackEndName'))]"
-													}
-												],
-												"loadBalancerInboundNatPools": [
-													{
-													  "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('lbName'), '/inboundNatPools/', variables('loadBalancerNatPoolName'))]"
+													  "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/applicationGateways/', parameters('applicationGatewayName'), '/backendAddressPools/', variables('appGatewayBackendPool'))]"
 													}
 												  ]
 											}

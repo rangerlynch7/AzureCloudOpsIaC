@@ -604,6 +604,60 @@
 				"VnetDeployment",
 				"AppGatewaySubnetDeployment"
 			]
-		}
+		},
+		{
+			"apiVersion": "2017-05-10",
+			"name": "VmssDeployment",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('vmssTemplateUrl')]"
+				},
+				"parameters": {
+					"vnetName": {
+						"value": "[parameters('vnetName')]"
+					},
+					"subnetName": {
+						"value": "[parameters('subnetName')]"
+					},
+					"vmSku": {
+						"value": "[parameters('vmSku')]"
+					},
+					"vmssName": {
+						"value": "[parameters('vmssName')]"
+					},
+					"instanceCount": {
+						"value": "[parameters('instanceCount')]"
+					},
+					"adminUsername": {
+						"value": "[parameters('adminUsername')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"imageReference.publisher": {
+						"value": "[parameters('imageReference.publisher')]"
+					},
+					"imageReference.offer": {
+						"value": "[parameters('imageReference.offer')]"
+					},
+					"imageReference.sku": {
+						"value": "[parameters('imageReference.sku')]"
+					},
+					"imageReference.version": {
+						"value": "[parameters('imageReference.version')]"
+					},
+					"applicationGatewayName": {
+						"value": "[parameters('applicationGatewayName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"VnetDeployment",
+				"SubnetDeployment",
+				"ApplicationGatewayDeployment"
+			]
+		},
 	]
 }
