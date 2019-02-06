@@ -13,20 +13,29 @@
 			"metadata": {
 				"description": "The IP Address pool for the virtual network in CIDR format."
 			}
-		}
-	},
-	"resources": [{
-		"type": "Microsoft.Network/virtualNetworks",
-		"name": "[parameters('vnetName')]",
-		"apiVersion": "2016-03-30",
-		"location": "[resourceGroup().location]",
-		"tags": {},
-		"properties": {
-			"addressSpace": {
-				"addressPrefixes": [
-					"[parameters('vnetAddressPrefix')]"
-				]
+		},
+		"vnetLocation": {
+			"type": "string",
+			"defaultValue": "Canada East",
+			"metadata": {
+				"description": "The location of the Vnet"
 			}
 		}
-	}]
+	},
+	"resources": [
+		{
+			"type": "Microsoft.Network/virtualNetworks",
+			"name": "[parameters('vnetName')]",
+			"apiVersion": "2016-03-30",
+			"location": "[parameters('vnetLocation')]",
+			"tags": {},
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"[parameters('vnetAddressPrefix')]"
+					]
+				}
+			}
+		}
+	]
 }

@@ -91,71 +91,63 @@
 			"metadata": {
 				"description": "Name of the Application Gateway"
 			}
+		}
+	},
+	"variables": {
+		"appGatewayBackendPool": "appGatewayBackendPool"
+	},
+	"resources": [{
+		"type": "Microsoft.Compute/virtualMachineScaleSets",
+		"name": "[parameters('vmssName')]",
+		"location": "[resourceGroup().location]",
+		"apiVersion": "2017-03-30",
+		"sku": {
+			"name": "[parameters('vmSku')]",
+			"capacity": "[parameters('instanceCount')]"
 		},
-	},
-	"variables":{
-		"appGatewayBackendPool":"appGatewayBackendPool"
-	},
-	"resources": [
-		{
-			"type": "Microsoft.Compute/virtualMachineScaleSets",
-			"name": "[parameters('vmssName')]",
-			"location": "[resourceGroup().location]",
-			"apiVersion": "2017-03-30",
-			"sku": {
-				"name": "[parameters('vmSku')]",
-				"capacity": "[parameters('instanceCount')]"
+		"properties": {
+			"overprovision": true,
+			"upgradePolicy": {
+				"mode": "Manual"
 			},
-			"properties": {
-				"overprovision": true,
-				"upgradePolicy": {
-					"mode": "Manual"
-				},
-				"virtualMachineProfile": {
-					"storageProfile": {
-						"osDisk": {
-							"createOption": "FromImage",
-							"caching": "ReadWrite"
-						},
-						"imageReference": {
-							"publisher": "[parameters('imageReference.publisher')]",
-							"offer": "[parameters('imageReference.offer')]",
-							"sku": "[parameters('imageReference.sku')]",
-							"version": "[parameters('imageReference.version')]"
-						}
+			"virtualMachineProfile": {
+				"storageProfile": {
+					"osDisk": {
+						"createOption": "FromImage",
+						"caching": "ReadWrite"
 					},
-					"osProfile": {
-						"computerNamePrefix": "[parameters('vmssName')]",
-						"adminUsername": "[parameters('adminUsername')]",
-						"adminPassword": "[parameters('adminPassword')]"
-					},
-					"networkProfile": {
-						"networkInterfaceConfigurations": [
-							{
-								"name": "nic",
-								"properties": {
-									"primary": true,
-									"ipConfigurations": [
-										{
-											"name": "ipconfig",
-											"properties": {
-												"subnet": {
-													"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-												},
-												"ApplicationGatewayBackendAddressPools": [
-													{
-													  "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/applicationGateways/', parameters('applicationGatewayName'), '/backendAddressPools/', variables('appGatewayBackendPool'))]"
-													}
-												  ]
-											}
-										}
-									]
-								}
-							}
-						]
+					"imageReference": {
+						"publisher": "[parameters('imageReference.publisher')]",
+						"offer": "[parameters('imageReference.offer')]",
+						"sku": "[parameters('imageReference.sku')]",
+						"version": "[parameters('imageReference.version')]"
 					}
+				},
+				"osProfile": {
+					"computerNamePrefix": "[parameters('vmssName')]",
+					"adminUsername": "[parameters('adminUsername')]",
+					"adminPassword": "[parameters('adminPassword')]"
+				},
+				"networkProfile": {
+					"networkInterfaceConfigurations": [{
+						"name": "[concat(parameters('vmssName'), '-nic')]",
+						"properties": {
+							"primary": true,
+							"ipConfigurations": [{
+								"name": "[concat(parameters('vmssName'), '-ipconfig')]",
+								"properties": {
+									"subnet": {
+										"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+									},
+									"ApplicationGatewayBackendAddressPools": [{
+										"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/applicationGateways/', parameters('applicationGatewayName'), '/backendAddressPools/', variables('appGatewayBackendPool'))]"
+									}]
+								}
+							}]
+						}
+					}]
 				}
 			}
 		}
-	]
+	}]
 }
