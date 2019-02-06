@@ -601,7 +601,8 @@
 				}
 			},
 			"dependsOn": [
-				"VnetDeployment"
+				"VnetDeployment",
+				"AppGatewaySubnetDeployment"
 			]
 		}
 	]
