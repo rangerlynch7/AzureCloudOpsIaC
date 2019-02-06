@@ -41,14 +41,14 @@
         },
         "input_vnetName": {
             "type": "string",
-            "defaultValue": "[concat((parameters('vnetLocationShort'),'-',parameters('environment'),'-',parameters('businessUnit'),'-vnet01')]",
+            "defaultValue": "[concat(parameters('vnetLocationShort'),'-',parameters('environment'),'-',parameters('businessUnit'),'-vnet01')]",
             "metadata": {
                 "description": "Select the environment"
             }
         }
     },
     "variables": {
-        "vnetName": "[concat((parameters('vnetLocationShort'),'-',parameters('environment'),'-',parameters('businessUnit'),'-vnet01')]",
+        "vnetName": "[concat(parameters('vnetLocationShort'),'-',parameters('environment'),'-',parameters('businessUnit'),'-vnet01')]",
         "templateBaseUrl": "https://raw.githubusercontent.com/rangerlynch7/ForkAzureCloudOpsIaC/ARMTemplates/computeNischith/DeploymentTemplates/ARMTemplates/",
         "computeCoreTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Core/')]",
         "computeExtensionsTemplateBaseUrl": "[concat(variables('templateBaseUrl'), 'Compute/Extensions/')]",
